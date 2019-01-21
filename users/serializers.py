@@ -16,7 +16,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'confirm_password')
+        fields = ('email', 'password', 'confirm_password')
 
     confirm_password = serializers.CharField(write_only=True)
 
@@ -35,14 +35,11 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).validate(data)
 
     def create(self, validated_data):
-        username = validated_data['username']
         email = validated_data['email']
         user = User.objects.create(
-            username=username,
             email=email
         )
         user.set_password(validated_data['password'])
-        user.is_active = False
         user.save()
         mail_subject = 'Activate your project_W account.'
         message = render_to_string('account_activation_email.html', {
@@ -51,7 +48,6 @@ class UserSerializer(serializers.ModelSerializer):
             'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': account_activation_token.make_token(user),
         })
-        print(message)
         send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, (email,))
         return user
 
@@ -68,3 +64,21 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def save(self):
+        email = self.validated_data['email']
+        user = User.objects.filter(email=email).first()
+        if user:
+            mail_subject = 'Reset your project_W password.'
+            message = render_to_string('password_reset_email.html', {
+                'user': user,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+                'token': account_activation_token.make_token(user),
+            })
+            send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, (email,))
+        else:
+            raise ValueError

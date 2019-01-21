@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'Project_W.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'webinar',
+        'NAME': 'project_w',
         'USER': 'webinar_user',
         'PASSWORD': '********',
         'HOST': 'localhost',
@@ -150,3 +150,10 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 HOST_NAME = 'http://127.0.0.1:8000'
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+}
