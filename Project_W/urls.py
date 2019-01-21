@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from rest_framework_jwt.views import obtain_jwt_token
-from users import views as user_views
+from users import views as user_views, serializers as user_serializers
 
 urlpatterns = [
     path('login/', obtain_jwt_token),
     path('register/', user_views.CreateUserView.as_view()),
+    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        user_serializers.activate, name='activate'),
 
     path('admin/', admin.site.urls),
 ]

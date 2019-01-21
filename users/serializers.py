@@ -1,8 +1,14 @@
+from django.shortcuts import HttpResponse
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from rest_framework_jwt.settings import api_settings
 import django.contrib.auth.password_validation as validators
 from django.core import exceptions
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from .tokens import account_activation_token
 
 User = get_user_model()
 
@@ -10,18 +16,9 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'confirm_password', 'token')
+        fields = ('username', 'email', 'password', 'confirm_password')
 
-    password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-    token = serializers.SerializerMethodField()
-
-    def get_token(self, obj):
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-        payload = jwt_payload_handler(obj)
-        token = jwt_encode_handler(payload)
-        return token
 
     def validate(self, data):
         password = data.get('password')
@@ -45,5 +42,29 @@ class UserSerializer(serializers.ModelSerializer):
             email=email
         )
         user.set_password(validated_data['password'])
+        user.is_active = False
         user.save()
+        mail_subject = 'Activate your project_W account.'
+        message = render_to_string('account_activation_email.html', {
+            'user': user,
+            'domain': settings.HOST_NAME,
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+            'token': account_activation_token.make_token(user),
+        })
+        print(message)
+        send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, (email,))
         return user
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
