@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # apps
     'rest_framework',
+    'rest_framework_swagger',
 
     # libs
     'users',
@@ -142,6 +143,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
 
 
