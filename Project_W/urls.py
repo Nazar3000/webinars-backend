@@ -26,9 +26,10 @@ urlpatterns = [
         user_serializers.activate, name='activate'),
     path('login/', obtain_jwt_token),
     path('token-refresh/', refresh_jwt_token),
-
     path('password_reset/', user_views.PasswordResetView.as_view()),
     path('password_reset_confirm/', user_views.PasswordResetConfirmView.as_view()),
+
+    path('user/<int:pk>/update/', user_views.UserProfileUpdateView.as_view()),
 
     path('admin/', admin.site.urls),
 ]

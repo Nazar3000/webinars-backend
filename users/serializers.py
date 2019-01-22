@@ -122,3 +122,9 @@ class PasswordResetConfirm(serializers.Serializer):
         else:
             errors['token'] = "Invalid token."
             raise serializers.ValidationError(errors)
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email',)
