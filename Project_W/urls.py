@@ -28,6 +28,7 @@ urlpatterns = [
     path('token-refresh/', refresh_jwt_token),
 
     path('password_reset/', user_views.PasswordResetView.as_view()),
+    path('password_reset_confirm/', user_views.PasswordResetConfirmView.as_view()),
 
     path('admin/', admin.site.urls),
 ]

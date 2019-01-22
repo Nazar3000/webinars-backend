@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from .tokens import account_activation_token
+from .tokens import account_activation_token, password_reset_token
 
 User = get_user_model()
 
@@ -77,8 +77,48 @@ class PasswordResetSerializer(serializers.Serializer):
             message = render_to_string('password_reset_email.html', {
                 'user': user,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
-                'token': account_activation_token.make_token(user),
+                'token': password_reset_token.make_token(user),
             })
             send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, (email,))
         else:
-            raise ValueError
+            errors = dict()
+            errors['email'] = "The user with given email does not exist."
+            raise serializers.ValidationError(errors)
+
+
+class PasswordResetConfirm(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+
+    def validate(self, data):
+        password = data.get('new_password')
+        errors = dict()
+        try:
+            validators.validate_password(password=password)
+        except exceptions.ValidationError as e:
+            errors['new_password'] = list(e.messages)
+        if errors:
+            raise serializers.ValidationError(errors)
+        if data.get('new_password') != data.get('confirm_password'):
+            errors['new_password'] = "Those passwords don't match."
+            raise serializers.ValidationError(errors)
+        return super(PasswordResetConfirm, self).validate(data)
+
+    def save(self):
+        uid = self.validated_data['uid']
+        token = self.validated_data['token']
+        errors = dict()
+        try:
+            uid = force_text(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            errors['uid'] = "Invalid uid."
+            raise serializers.ValidationError(errors)
+        if user and password_reset_token.check_token(user, token):
+            user.set_password(self.validated_data['new_password'])
+            user.save()
+        else:
+            errors['token'] = "Invalid token."
+            raise serializers.ValidationError(errors)
