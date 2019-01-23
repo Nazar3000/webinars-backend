@@ -1,6 +1,7 @@
 from rest_framework.generics import RetrieveUpdateAPIView
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer
+from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
+    CreditCardProfile, CreditCardProfileSerializer
 from rest_framework.generics import CreateAPIView
 from rest_framework import permissions, status
 from rest_framework.views import APIView
@@ -51,3 +52,9 @@ class UserProfileUpdateView(RetrieveUpdateAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()
+
+
+class CreditCardProfileView(CreateAPIView):
+    model = CreditCardProfile
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = CreditCardProfileSerializer

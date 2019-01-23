@@ -1,5 +1,6 @@
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 
 
 class MyUserManager(BaseUserManager):
@@ -66,4 +67,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.email
+
+
+class CreditCardProfile(models.Model):
+    cc_number = models.CharField(max_length=16,
+                                 validators=(RegexValidator(r'^\d{13,16}$'),),
+                                 verbose_name='cardholder number'
+                                 )
+    cc_name = models.CharField(max_length=256, verbose_name='cardholder name')
+    cc_expiry_date = models.DateField(verbose_name='expiry date MM/YYYY')
+    cvv_code = models.PositiveIntegerField(validators=(MinValueValidator(100),
+                                                       MaxValueValidator(9999)),
+                                           verbose_name='CVV code'
+                                           )
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Credit Card Profile"
+        verbose_name_plural = "Credit Card Profiles"
+
+    def __str__(self):
+        return '{}-{}'.format(self.cc_number, self.user)
 

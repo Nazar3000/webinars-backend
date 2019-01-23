@@ -1,7 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, CreditCardProfile
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+
+class CreditCardProfileInline(admin.TabularInline):
+    model = CreditCardProfile
+    extra = 0
 
 
 class CustomUserAdmin(UserAdmin):
@@ -21,6 +25,8 @@ class CustomUserAdmin(UserAdmin):
          ),
     )
     ordering = ('email',)
-
+    inlines = (CreditCardProfileInline,)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(CreditCardProfile)
+
