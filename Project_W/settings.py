@@ -120,6 +120,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+
 USE_I18N = True
 
 USE_L10N = True
@@ -132,6 +133,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 REST_FRAMEWORK = {
@@ -169,7 +173,13 @@ SWAGGER_SETTINGS = {
     # 'LOGIN_URL': 'users:login',
     # 'LOGOUT_URL': 'users:logout',
     'USE_SESSION_AUTH': True,
-    'DOC_EXPANSION': 'list',
     'APIS_SORTER': 'alpha',
-    'SECURITY_DEFINITIONS': None,
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+    'is_authenticated': True,
 }
