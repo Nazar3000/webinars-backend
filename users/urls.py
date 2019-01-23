@@ -18,3 +18,4 @@ urlpatterns = [
 
     path('credit_card_profile/create/', user_views.CreditCardProfileView.as_view()),
 ]
+
