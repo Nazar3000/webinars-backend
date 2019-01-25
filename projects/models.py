@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from users.models import CustomUser
 
+from random import randint
+from multiselectfield import MultiSelectField
+
 
 class Project(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='User')
@@ -46,14 +49,15 @@ class WebinarBase(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated date')
 
-    active_chats = models.CharField(
+    active_chats = MultiSelectField(
         choices=CHATS,
+        max_choices=2,
         max_length=7,
         null=True,
         blank=True,
         verbose_name='Active chats')
 
-    # TODO: must be rewrite:
+    # TODO: 'date_activate' must be rewritten:
     date_activate = models.DateTimeField(null=True, blank=True, verbose_name="Activate date")
 
     user_counter = models.CharField(
@@ -63,13 +67,13 @@ class WebinarBase(models.Model):
         blank=True,
         verbose_name='User counter type')
 
-    min_fake_user_count = models.IntegerField(
+    min_fake_user_count = models.PositiveIntegerField(
         default=0,
         null=True,
         blank=True,
         verbose_name='Minimum value for fake people count'
     )
-    max_fake_user_count = models.IntegerField(
+    max_fake_user_count = models.PositiveIntegerField(
         default=0,
         null=True,
         blank=True,
@@ -106,11 +110,17 @@ class WebinarBase(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_fake_user_count(self):
+        if self.min_fake_user_count and self.max_fake_user_count:
+            return randint(self.min_fake_user_count, self.max_fake_user_count)
+        else:
+            return None
+
 
 class Webinar(WebinarBase):
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
 
-    # TODO: Write the url or smth another associated with streaming video.
+    # TODO: Write the url or smth else which associated with streaming video.
 
     class Meta:
         verbose_name = 'Webinar'
@@ -134,6 +144,8 @@ class FakeChatMessageBase(models.Model):
     name = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake name')
     nickname = models.CharField(max_length=9, null=True, blank=True, verbose_name='Fake nickname')
     message = models.TextField(max_length=4095, null=True, blank=True)
+    display_time = models.DateTimeField(null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
 
     class Meta:

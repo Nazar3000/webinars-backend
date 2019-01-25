@@ -48,6 +48,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     role = models.CharField(choices=ROLES, max_length=6, default='trial')
 
+    # TODO: add time zone to model
+
     USERNAME_FIELD = 'email'
     objects = MyUserManager()
 

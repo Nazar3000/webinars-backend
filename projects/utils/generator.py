@@ -42,4 +42,3 @@ def generate_name(locale_list=[]):
         fake = Faker()
     return fake.first_name()
 
-
