@@ -11,7 +11,7 @@ class Project(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated date')
 
     is_active = models.BooleanField(default=True, verbose_name='Is active?')
-    cover_time = models.IntegerField(null=True, blank=True,
+    cover_time = models.PositiveIntegerField(null=True, blank=True,
                                      verbose_name='Cover time before video starts (in seconds)')
 
     class Meta:
@@ -130,4 +130,23 @@ class AutoWebinar(WebinarBase):
         verbose_name_plural = 'Auto webinars'
 
 
+class FakeChatMessageBase(models.Model):
+    name = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake name')
+    nickname = models.CharField(max_length=9, null=True, blank=True, verbose_name='Fake nickname')
+    message = models.TextField(max_length=4095, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
 
+    class Meta:
+        abstract = True
+        verbose_name = 'Fake message'
+        verbose_name_plural = 'Fake messages'
+
+    # TODO: rewrite save method for generate fake names and nicknames
+
+
+class WebinarFakeChatMessage(FakeChatMessageBase):
+    webinar = models.ForeignKey(Webinar, on_delete=models.CASCADE, verbose_name='Webinar')
+
+
+class AutoWebinarFakeChatMessage(FakeChatMessageBase):
+    auto_webinar = models.ForeignKey(AutoWebinar, on_delete=models.CASCADE, verbose_name='Auto webinar')
