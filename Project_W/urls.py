@@ -25,5 +25,6 @@ app_name = 'api'
 urlpatterns = [
     path('api/v1/docs/', schema_view, name='docs'),
     path('admin/', admin.site.urls),
-    path('api/v1/', include('users.urls', namespace='v1')),
+    path('api/v1/', include('users.urls')),
+    path('api/v1/projects/', include('projects.urls')),
 ]
