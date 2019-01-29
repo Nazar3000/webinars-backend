@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
     CreditCardProfile, CreditCardProfileSerializer
@@ -48,7 +48,7 @@ class PasswordResetConfirmView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserProfileUpdateView(RetrieveUpdateAPIView):
+class UserProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()

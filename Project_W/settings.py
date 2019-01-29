@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # apps
     'rest_framework',
     'rest_framework_swagger',
+    'multiselectfield',
 
     # libs
     'users',

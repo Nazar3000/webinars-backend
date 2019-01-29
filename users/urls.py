@@ -14,7 +14,8 @@ urlpatterns = [
     path('token-refresh/', refresh_jwt_token),
     path('password_reset/', user_views.PasswordResetView.as_view()),
     path('password_reset_confirm/', user_views.PasswordResetConfirmView.as_view()),
-    path('user/<int:pk>/update/', user_views.UserProfileUpdateView.as_view()),
+    path('user/<int:pk>/update/', user_views.UserProfileUpdateDeleteView.as_view()),
+    path('user/<int:pk>/delete/', user_views.UserProfileUpdateDeleteView.as_view()),
 
     path('credit_card_profile/create/', user_views.CreditCardProfileView.as_view()),
 ]
