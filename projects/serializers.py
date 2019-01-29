@@ -17,9 +17,6 @@ class UpdateActivationProjectSerializer(serializers.ModelSerializer):
 class WebinarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Webinar
-        # fields = ('project', 'video', 'title', 'description', 'is_active', 'active_chats',
-        #           'date_activate', 'user_counter', 'min_fake_user_count', 'image_cover',
-        #           'max_fake_user_count', 'cover_type', 'video_cover', )
         fields = '__all__'
 
 
@@ -31,3 +28,27 @@ class AutoWebinarSerializer(serializers.ModelSerializer):
 
 class UserCountSerializer(serializers.Serializer):
     counter = serializers.IntegerField(min_value=0)
+
+
+class WebinarChatActivateBase(serializers.ModelSerializer):
+    CHATS = (
+        ('private', 'private'),
+        ('public', 'public'),
+    )
+
+    active_chats = serializers.MultipleChoiceField(choices=CHATS)
+
+    class Meta:
+        abstract = True
+
+
+class WebinarChatActivateSerializer(WebinarChatActivateBase):
+    class Meta:
+        model = Webinar
+        fields = ('active_chats', )
+
+
+class AutoWebinarCharActivateSerializer(WebinarChatActivateBase):
+    class Meta:
+        model = AutoWebinar
+        fields = ('active_chats', )
