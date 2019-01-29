@@ -2,7 +2,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
     CreditCardProfile, CreditCardProfileSerializer
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,7 +54,20 @@ class UserProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
 
 
-class CreditCardProfileView(CreateAPIView):
+class CreditCardProfileView(ListCreateAPIView):
+    authentication_classes = (JSONWebTokenAuthentication,)
     model = CreditCardProfile
-    permission_classes = (permissions.AllowAny,)
     serializer_class = CreditCardProfileSerializer
+
+    def get_queryset(self):
+        queryset = CreditCardProfile.objects.all()
+        user = self.kwargs.get('pk')
+        if user:
+            queryset = queryset.filter(user=user)
+        return queryset
+
+
+class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    serializer_class = CreditCardProfileSerializer
+    queryset = CreditCardProfile.objects.all()

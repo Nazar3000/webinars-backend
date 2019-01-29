@@ -18,5 +18,9 @@ urlpatterns = [
     path('user/<int:pk>/delete/', user_views.UserProfileUpdateDeleteView.as_view()),
 
     path('credit_card_profile/create/', user_views.CreditCardProfileView.as_view()),
+    path('credit_card_profiles/<int:pk>/', user_views.CreditCardProfileView.as_view()),
+
+    path('credit_card_profile/<int:pk>/update/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
+    path('credit_card_profile/<int:pk>/delete/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
 ]
 
