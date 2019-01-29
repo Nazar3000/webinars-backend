@@ -42,6 +42,25 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
     http_method_names = ['get', 'post', 'put', 'delete']
     queryset = Webinar.objects.all()
     serializer_class = WebinarSerializer
-    serializer_active_chats = WebinarChatActivateSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'activate_chats':
+            return WebinarChatActivateSerializer
+        elif self.action == 'user_fake_count':
+            return UserCountSerializer
+        else:
+            return self.serializer_class
 
 
+class AutoWebinarViewSet(WebinarMixin, ModelViewSet):
+    # TODO: change permissions
+    permission_classes = (AllowAny,)
+    http_method_names = ['get', 'post', 'put', 'delete']
+    queryset = AutoWebinar.objects.all()
+    serializer_class = AutoWebinarSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'activate_chats':
+            return WebinarChatActivateSerializer
+        else:
+            return self.serializer_class
