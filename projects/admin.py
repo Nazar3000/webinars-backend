@@ -1,5 +1,6 @@
 from django.contrib import admin
-from projects.models import Project, Webinar, AutoWebinar
+from projects.models import Project, Webinar, AutoWebinar, WebinarFakeChatMessage, \
+    AutoWebinarFakeChatMessage
 
 
 class ProjectAdmin(admin.ModelAdmin):
@@ -11,3 +12,5 @@ class ProjectAdmin(admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Webinar)
 admin.site.register(AutoWebinar)
+admin.site.register(WebinarFakeChatMessage)
+admin.site.register(AutoWebinarFakeChatMessage)

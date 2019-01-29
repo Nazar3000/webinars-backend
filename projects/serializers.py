@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from projects.models import Project, Webinar, AutoWebinar
+from projects.models import Project, Webinar, AutoWebinar, WebinarFakeChatMessage, AutoWebinarFakeChatMessage
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -48,7 +48,20 @@ class WebinarChatActivateSerializer(WebinarChatActivateBase):
         fields = ('active_chats', )
 
 
-class AutoWebinarCharActivateSerializer(WebinarChatActivateBase):
+class AutoWebinarChatActivateSerializer(WebinarChatActivateBase):
     class Meta:
         model = AutoWebinar
         fields = ('active_chats', )
+
+
+class WebinarFakeChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WebinarFakeChatMessage
+        fields = '__all__'
+
+
+class AutoWebinarFakeChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutoWebinarFakeChatMessage
+        fields = '__all__'
+

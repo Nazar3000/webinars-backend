@@ -1,9 +1,9 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from users.models import CustomUser
 
 from random import randint
 from multiselectfield import MultiSelectField
+from projects.utils.generator import generate_nickname, generate_name
 
 
 class Project(models.Model):
@@ -142,22 +142,32 @@ class Webinar(WebinarBase):
 
 class FakeChatMessageBase(models.Model):
     name = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake name')
-    nickname = models.CharField(max_length=9, null=True, blank=True, verbose_name='Fake nickname')
+    nickname = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake nickname')
     message = models.TextField(max_length=4095, null=True, blank=True)
     display_time = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
 
     class Meta:
         abstract = True
-        verbose_name = 'Fake message'
-        verbose_name_plural = 'Fake messages'
 
-    # TODO: rewrite save method for generate fake names and nicknames
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.name = generate_name(locale_list=['en', 'uk_UA'])
+        self.nickname = generate_nickname()
+        super(FakeChatMessageBase, self).save(force_insert=False, force_update=False, using=None, update_fields=None)
 
 
 class WebinarFakeChatMessage(FakeChatMessageBase):
     webinar = models.ForeignKey(Webinar, on_delete=models.CASCADE, verbose_name='Webinar')
 
+    class Meta:
+        verbose_name = 'Fake webinar message'
+        verbose_name_plural = 'Fake webinar messages '
+
 
 class AutoWebinarFakeChatMessage(FakeChatMessageBase):
     auto_webinar = models.ForeignKey(AutoWebinar, on_delete=models.CASCADE, verbose_name='Auto webinar')
+
+    class Meta:
+        verbose_name = 'Fake autowebinar message'
+        verbose_name_plural = 'Fake autowebinar messages'
