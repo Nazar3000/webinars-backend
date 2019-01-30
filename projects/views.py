@@ -1,9 +1,11 @@
-from rest_framework.generics import RetrieveUpdateAPIView, ListCreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView, \
+    RetrieveUpdateDestroyAPIView
 from projects.models import Project, Webinar, AutoWebinar, WebinarFakeChatMessage, AutoWebinarFakeChatMessage
 from rest_framework.permissions import AllowAny
 from projects.serializers import ProjectSerializer, UpdateActivationProjectSerializer, WebinarSerializer, \
     AutoWebinarSerializer, UserCountSerializer, WebinarChatActivateSerializer, AutoWebinarChatActivateSerializer, \
-    WebinarFakeChatMessageSerializer, AutoWebinarFakeChatMessageSerializer
+    WebinarFakeChatMessageSerializer, AutoWebinarFakeChatMessageSerializer, WebinarFakeMessageSerializer, \
+    AutoWebinarFakeMessageSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -19,7 +21,7 @@ class ListCreateProjectView(ListCreateAPIView):
     queryset = Project.objects.all()
 
 
-class RetrieveUpdateProjectView(RetrieveUpdateAPIView):
+class RetrieveUpdateDestroyProjectView(RetrieveUpdateDestroyAPIView):
     model = Project
     # TODO: change permissions
     permission_classes = (AllowAny, )
@@ -33,14 +35,15 @@ class UpdateProjectActivation(UpdateAPIView):
     # TODO: change permissions
     permission_classes = (AllowAny, )
     queryset = Project.objects.all()
+    http_method_names = ['put']
 
 
 class WebinarViewSet(WebinarMixin, ModelViewSet):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     http_method_names = ['get', 'post', 'put', 'delete', 'patch']
-    queryset = Webinar.objects.all()
     serializer_class = WebinarSerializer
+    queryset = Webinar.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'activate_chats':
@@ -54,7 +57,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
 class AutoWebinarViewSet(WebinarMixin, ModelViewSet):
     # TODO: change permissions
     permission_classes = (AllowAny,)
-    http_method_names = ['get', 'post', 'put', 'delete']
+    http_method_names = ['get', 'post', 'put', 'delete', 'patch']
     queryset = AutoWebinar.objects.all()
     serializer_class = AutoWebinarSerializer
 
@@ -65,25 +68,35 @@ class AutoWebinarViewSet(WebinarMixin, ModelViewSet):
             return self.serializer_class
 
 
-class WebinarFakeChatMessageListCreateView(ListCreateAPIView):
+class ListCreateWebinarFakeChatMessageView(ListCreateAPIView):
     # TODO: change permissions
     permission_classes = (AllowAny,)
-    serializer_class = WebinarFakeChatMessageSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return WebinarFakeMessageSerializer
+        else:
+            return WebinarFakeChatMessageSerializer
 
     def get_queryset(self):
         webinar = self.kwargs['webinar_id']
-        print(webinar)
         return WebinarFakeChatMessage.objects.filter(webinar_id=webinar)
 
 
-class WebinarFakeChatMessageUpdateRetrieveDestroyView(RetrieveUpdateDestroyAPIView):
+class UpdateRetrieveDestroyWebinarFakeChatMessageView(RetrieveUpdateDestroyAPIView):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     queryset = WebinarFakeChatMessage.objects.all()
     serializer_class = WebinarFakeChatMessageSerializer
 
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PUT', 'PATCH']:
+            return WebinarFakeMessageSerializer
+        else:
+            return WebinarFakeChatMessageSerializer
 
-class AutoWebinarFakeChatMessageListCreateView(ListCreateAPIView):
+
+class ListCreateAutoWebinarFakeChatMessageView(ListCreateAPIView):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     queryset = AutoWebinarFakeChatMessage.objects.all()
@@ -91,14 +104,22 @@ class AutoWebinarFakeChatMessageListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         webinar = self.kwargs['autowebinar_id']
-        print(webinar)
         return WebinarFakeChatMessage.objects.filter(webinar_id=webinar)
 
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AutoWebinarFakeMessageSerializer
+        else:
+            return AutoWebinarFakeChatMessageSerializer
 
-class AutoWebinarFakeChatMessageUpdateRetrieveDestroyView(RetrieveUpdateDestroyAPIView):
+
+class UpdateRetrieveDestroyAutoWebinarFakeChatMessageView(RetrieveUpdateDestroyAPIView):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     queryset = AutoWebinarFakeChatMessage.objects.all()
-    serializer_class = AutoWebinarFakeChatMessageSerializer
 
-
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PUT', 'PATCH']:
+            return AutoWebinarFakeMessageSerializer
+        else:
+            return AutoWebinarFakeChatMessageSerializer

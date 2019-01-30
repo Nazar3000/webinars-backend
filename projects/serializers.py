@@ -60,6 +60,18 @@ class WebinarFakeChatMessageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class WebinarFakeMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WebinarFakeChatMessage
+        exclude = ('name', 'nickname', )
+
+
+class AutoWebinarFakeMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AutoWebinarFakeChatMessage
+        exclude = ('name', 'nickname', )
+
+
 class AutoWebinarFakeChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AutoWebinarFakeChatMessage
