@@ -26,7 +26,7 @@ SECRET_KEY = 'huxtio*k7xptq8qc5i-(o4(6-_@+&-ot^0y3^5%np3+o0f5o78'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fc160874.ngrok.io']
 
 
 # Application definition
