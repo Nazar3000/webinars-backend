@@ -9,3 +9,4 @@ class TelegramBotView(ListCreateAPIView):
     queryset = TelegramBot.objects.all()
     serializer_class = TelegramBotSerializer
     pagination_class = None
+
