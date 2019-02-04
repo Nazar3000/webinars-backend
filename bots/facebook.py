@@ -22,11 +22,12 @@ class FacebookBotView(generic.View):
 
     def post(self, request, *args, **kwargs):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
+        # pprint(incoming_message)
+        # for entry in incoming_message['entry']:
+        #     for message in entry['messaging']:
+        #         if 'message' in message:
+        #             post_facebook_message(message['sender']['id'])
         pprint(incoming_message)
-        for entry in incoming_message['entry']:
-            for message in entry['messaging']:
-                if 'message' in message:
-                    post_facebook_message(message['sender']['id'])
         return HttpResponse()
 
 
@@ -36,9 +37,9 @@ def post_facebook_message(fbid):
     user_details_params = {'fields': 'first_name,last_name,profile_pic', 'access_token': PAGE_ACCESS_TOKEN}
     user_details = requests.get(user_details_url, user_details_params).json()
 
-    message_to_response = 'Hi, {0}. Welcome!'
+    message_to_response = 'Hi, {0}. Welcome!'.format(user_details['last_name'])
 
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token={}'.format(PAGE_ACCESS_TOKEN)
     response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": message_to_response}})
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
-    pprint(status.json())
+    # pprint(status.json())
