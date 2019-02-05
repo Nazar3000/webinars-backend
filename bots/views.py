@@ -13,21 +13,21 @@ class TelegramBotView(ListCreateAPIView):
 
 
 class FacebookBotView(ListCreateAPIView):
-    authentication_classes = (JSONWebTokenAuthentication, )
+    authentication_classes = (JSONWebTokenAuthentication,)
     queryset = FacebookBot.objects.all()
     serializer_class = FacebookBotSerializer
     pagination_class = None
 
 
 class MessagesChainView(ListCreateAPIView):
-    authentication_classes = (JSONWebTokenAuthentication, )
+    authentication_classes = (JSONWebTokenAuthentication,)
     queryset = MessagesChain.objects.all()
     serializer_class = MessagesChainSerializer
     pagination_class = None
 
 
 class BotMessageView(ListCreateAPIView):
-    authentication_classes = (JSONWebTokenAuthentication, )
+    authentication_classes = (JSONWebTokenAuthentication,)
     queryset = BotMessage.objects.all()
     serializer_class = BotMessageSerializer
     pagination_class = None
