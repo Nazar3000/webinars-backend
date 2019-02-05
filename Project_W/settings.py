@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'projects',
     'bots',
     'chains',
+    'positions'
 ]
 
 MIDDLEWARE = [
