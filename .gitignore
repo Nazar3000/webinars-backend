@@ -102,5 +102,3 @@ ENV/
 .DS_Store
 
 .idea/
-
-**/migrations/*

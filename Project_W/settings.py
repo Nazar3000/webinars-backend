@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-# from .db_settings import DB_NAME
+from .db_settings import DB_NAME
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +26,7 @@ SECRET_KEY = 'huxtio*k7xptq8qc5i-(o4(6-_@+&-ot^0y3^5%np3+o0f5o78'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fc160874.ngrok.io']
+ALLOWED_HOSTS = ['fc160874.ngrok.io', '127.0.0.1']
 
 
 # Application definition
@@ -89,8 +89,7 @@ WSGI_APPLICATION = 'Project_W.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': DB_NAME,
-        'NAME': 'project_w',
+        'NAME': DB_NAME,
         'USER': 'webinar_user',
         'PASSWORD': '********',
         'HOST': 'localhost',
