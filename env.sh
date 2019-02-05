@@ -7,3 +7,5 @@ export DATABASE_USER='webinar_user'
 export DATABASE_PASSWORD='********'
 export DATABASE_HOST='127.0.0.1'
 export DATABASE_PORT='5432'
+
+export HOST_NAME='http://127.0.0.1:8000'

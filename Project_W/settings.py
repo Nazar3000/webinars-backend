@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from .db_settings import DB_NAME
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -165,7 +164,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-HOST_NAME = 'http://127.0.0.1:8000'
+HOST_NAME = os.getenv('HOST_NAME')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
