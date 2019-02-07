@@ -33,4 +33,28 @@ class FacebookBot(BotBase):
         return '{} - facebook bot'.format(self.project)
 
 
-# Test comment
+class MessagesChain(models.Model):
+    title = models.CharField(max_length=256)
+    start_time = models.DateTimeField()
+    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Messages Chain"
+        verbose_name_plural = "Messages Chains"
+
+    def __str__(self):
+        return '{} - {}'.format(self.project, self.title)
+
+
+class BotMessage(models.Model):
+    text = models.TextField()
+    interval = models.PositiveIntegerField(verbose_name='interval (hours)')
+    chain = models.ForeignKey(MessagesChain, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Bot Message"
+        verbose_name_plural = "Bot Messages"
+
+    def __str__(self):
+        return '{} - {}'.format(self.chain, self.id)
