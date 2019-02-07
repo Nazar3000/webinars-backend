@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-# from .db_settings import DB_NAME
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'huxtio*k7xptq8qc5i-(o4(6-_@+&-ot^0y3^5%np3+o0f5o78'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fc160874.ngrok.io']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -49,6 +48,7 @@ INSTALLED_APPS = [
     'projects',
     'bots',
     'chains',
+    'positions'
 ]
 
 MIDDLEWARE = [
@@ -89,12 +89,11 @@ WSGI_APPLICATION = 'Project_W.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': DB_NAME,
-        'NAME': 'project_w',
-        'USER': 'webinar_user',
-        'PASSWORD': '********',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
 
@@ -165,7 +164,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-HOST_NAME = 'http://127.0.0.1:8000'
+HOST_NAME = os.getenv('HOST_NAME')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
