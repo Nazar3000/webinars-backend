@@ -34,5 +34,5 @@ class MessagesChainSerializer(serializers.ModelSerializer):
 
 class BotMessageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MessagesChain
+        model = BotMessage
         fields = '__all__'

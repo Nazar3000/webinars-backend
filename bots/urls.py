@@ -16,18 +16,21 @@ urlpatterns = [
     # viber
     path('viber_bot/', views.ViberBotListCreateView.as_view(), name='list_create_viber_bot'),
     path('viber_bot/<int:pk>/', views.ViberBotRetrieveUpdate.as_view(), name='retrieve_update_viber_bot'),
+
     # whatsapp
     path('whatsapp_bot/', views.WhatsAppListCreateBotView.as_view(), name='list_create_whatsapp_bot'),
     path('whatsapp_bot/', views.WhatsAppRetrieveUpdateView.as_view(), name='retrieve_update_whatsapp_bot'),
 
     # chains
     path('message_chain_create/', views.MessagesChainView.as_view(), name='list_create_message_chain'),
+    path('message_chain/<int:pk>/retrieve/', views.MessagesChainRetrieveUpdateDeleteView.as_view()),
+    path('message_chain/<int:pk>/update/', views.MessagesChainRetrieveUpdateDeleteView.as_view()),
+    path('message_chain/<int:pk>/delete/', views.MessagesChainRetrieveUpdateDeleteView.as_view()),
     path('bot_message_create/', views.BotMessageView.as_view(), name='list_create_bot_message'),
+    path('bot_message/<int:pk>/retrieve/', views.BotMessageRetrieveUpdateDeleteView.as_view()),
+    path('bot_message/<int:pk>/update/', views.BotMessageRetrieveUpdateDeleteView.as_view()),
+    path('bot_message/<int:pk>/delete/', views.BotMessageRetrieveUpdateDeleteView.as_view()),
 
 
-    # hardcoded tokens
-    path('facebook_bot/66d2b8f4a09cd35cb23076a1da5d51529136a3373fd570b122/',
-         FacebookBotView.as_view(),
-         name='facebook_bot_token'),
 ]
 
