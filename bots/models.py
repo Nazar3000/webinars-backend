@@ -1,5 +1,6 @@
 from django.db import models
 from projects.models import Project
+from .telegram import TelegramBotHandler
 
 
 class BotBase(models.Model):
@@ -13,6 +14,7 @@ class BotBase(models.Model):
 
 class TelegramBot(BotBase):
     project = models.OneToOneField(Project, on_delete=models.CASCADE)
+    chat_id = models.CharField(max_length=256, blank=True, null=True)
 
     class Meta:
         verbose_name = "Telegram Bot"
@@ -50,6 +52,11 @@ class MessagesChain(models.Model):
 class BotMessage(models.Model):
     text = models.TextField()
     interval = models.PositiveIntegerField(verbose_name='interval (hours)')
+    link = models.URLField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, upload_to='messages/images')
+    audio = models.FileField(blank=True, null=True, upload_to='messages/audio')
+    video = models.FileField(blank=True, null=True, upload_to='messages/video')
+    file = models.FileField(blank=True, null=True, upload_to='messages/files')
     chain = models.ForeignKey(MessagesChain, on_delete=models.CASCADE)
 
     class Meta:

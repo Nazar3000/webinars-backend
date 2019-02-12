@@ -187,3 +187,4 @@ SWAGGER_SETTINGS = {
     },
     'is_authenticated': True,
 }
+
