@@ -35,6 +35,22 @@ class FacebookBot(BotBase):
         return '{} - facebook bot'.format(self.project)
 
 
+class ViberBot(BotBase):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Viber Bot"
+        verbose_name_plural = "Viber Bots"
+
+
+class WhatsAppBot(BotBase):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "WhatsApp Bot"
+        verbose_name_plural = "WhatsApp Bots"
+
+
 class MessagesChain(models.Model):
     title = models.CharField(max_length=256)
     start_time = models.DateTimeField()
