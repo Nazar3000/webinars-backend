@@ -35,6 +35,10 @@ class FacebookBotListCreateView(ListCreateAPIView):
 
 class FacebookRetrieveUpdateView(RetrieveUpdateAPIView):
     authentication_classes = (JSONWebTokenAuthentication, )
+    serializer_class = FacebookBotSerializer
+    queryset = FacebookBot.objects.all()
+
+
 class TelegramBotRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = TelegramBotSerializer
