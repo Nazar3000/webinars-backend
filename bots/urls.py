@@ -19,7 +19,7 @@ urlpatterns = [
 
     # whatsapp
     path('whatsapp_bot/', views.WhatsAppListCreateBotView.as_view(), name='list_create_whatsapp_bot'),
-    path('whatsapp_bot/', views.WhatsAppRetrieveUpdateView.as_view(), name='retrieve_update_whatsapp_bot'),
+    path('whatsapp_bot/<int:pk>/', views.WhatsAppRetrieveUpdateView.as_view(), name='retrieve_update_whatsapp_bot'),
 
     # chains
     path('message_chain_create/', views.MessagesChainView.as_view(), name='list_create_message_chain'),
