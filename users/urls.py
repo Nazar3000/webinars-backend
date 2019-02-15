@@ -1,7 +1,8 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework_jwt.views import refresh_jwt_token
 from users import views as user_views, serializers as user_serializers
+from rest_framework_simplejwt import views as jwt_views
 
 
 app_name = 'users'
@@ -23,5 +24,8 @@ urlpatterns = [
 
     path('credit_card_profile/<int:pk>/update/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
     path('credit_card_profile/<int:pk>/delete/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
+
+    path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
 

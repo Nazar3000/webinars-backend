@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -50,13 +51,13 @@ class PasswordResetConfirmView(APIView):
 
 
 class UserProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
+    authentication_classes = (IsAuthenticated,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()
 
 
 class CreditCardProfileView(ListCreateAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
+    authentication_classes = (IsAuthenticated,)
     model = CreditCardProfile
     serializer_class = CreditCardProfileSerializer
 
@@ -69,7 +70,7 @@ class CreditCardProfileView(ListCreateAPIView):
 
 
 class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
+    authentication_classes = (IsAuthenticated,)
     serializer_class = CreditCardProfileSerializer
     queryset = CreditCardProfile.objects.all()
 
