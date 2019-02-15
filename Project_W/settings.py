@@ -190,3 +190,6 @@ SWAGGER_SETTINGS = {
     'is_authenticated': True,
 }
 
+SIMPLE_JWT = {
+    'ROTATE_REFRESH_TOKENS': True,
+}
