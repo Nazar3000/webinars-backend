@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'bots',
     'chains',
     'positions',
-    'refreshtoken',
 ]
 
 MIDDLEWARE = [
