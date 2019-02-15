@@ -51,13 +51,13 @@ class PasswordResetConfirmView(APIView):
 
 
 class UserProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (IsAuthenticated,)
+    authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()
 
 
 class CreditCardProfileView(ListCreateAPIView):
-    authentication_classes = (IsAuthenticated,)
+    authentication_classes = (JSONWebTokenAuthentication,)
     model = CreditCardProfile
     serializer_class = CreditCardProfileSerializer
 
@@ -70,7 +70,7 @@ class CreditCardProfileView(ListCreateAPIView):
 
 
 class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (IsAuthenticated,)
+    authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = CreditCardProfileSerializer
     queryset = CreditCardProfile.objects.all()
 
