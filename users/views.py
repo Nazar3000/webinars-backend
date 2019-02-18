@@ -50,7 +50,7 @@ class PasswordResetConfirmView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+class UserProfileRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()
