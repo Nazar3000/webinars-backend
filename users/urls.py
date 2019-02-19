@@ -12,8 +12,6 @@ urlpatterns = [
     re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
             user_serializers.activate, name='activate'),
     path('activate_user/<int:user_id>/', user_views.activate_user),
-    # path('login/', obtain_jwt_token),
-    # path('token-refresh/', refresh_jwt_token),
     path('password_reset/', user_views.PasswordResetView.as_view()),
     path('password_reset_confirm/', user_views.PasswordResetConfirmView.as_view()),
 
