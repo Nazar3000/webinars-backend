@@ -9,7 +9,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token, password_reset_token
-from .models import CreditCardProfile
+from .models import CreditCardProfile, UserProfile
 
 User = get_user_model()
 
@@ -125,6 +125,26 @@ class PasswordResetConfirm(serializers.Serializer):
             raise serializers.ValidationError(errors)
 
 
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+
+    def validate(self, data):
+        password = data.get('new_password')
+        errors = dict()
+        try:
+            validators.validate_password(password=password)
+        except exceptions.ValidationError as e:
+            errors['new_password'] = list(e.messages)
+        if errors:
+            raise serializers.ValidationError(errors)
+        if data.get('new_password') != data.get('confirm_password'):
+            errors['new_password'] = "Those passwords don't match."
+            raise serializers.ValidationError(errors)
+        return super(PasswordChangeSerializer, self).validate(data)
+
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -134,4 +154,10 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class CreditCardProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditCardProfile
+        fields = '__all__'
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
         fields = '__all__'

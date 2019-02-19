@@ -1,7 +1,7 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
-    CreditCardProfile, CreditCardProfileSerializer
+    CreditCardProfile, CreditCardProfileSerializer, UserProfile, UserProfileSerializer, PasswordChangeSerializer
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework import permissions, status
 from rest_framework.views import APIView
@@ -50,7 +50,7 @@ class PasswordResetConfirmView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserProfileRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     serializer_class = UserUpdateSerializer
     queryset = User.objects.all()
@@ -63,7 +63,7 @@ class CreditCardProfileView(ListCreateAPIView):
 
     def get_queryset(self):
         queryset = CreditCardProfile.objects.all()
-        user = self.kwargs.get('pk')
+        user = self.kwargs.get('user_id')
         if user:
             queryset = queryset.filter(user=user)
         return queryset
@@ -88,3 +88,46 @@ def activate_user(request, user_id):
                         status=status.HTTP_200_OK)
     else:
         return Response('User does not exist!', status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(ListCreateAPIView):
+    # authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    model = UserProfile
+    serializer_class = UserProfileSerializer
+
+    def get_queryset(self):
+        queryset = UserProfile.objects.all()
+        user = self.kwargs.get('user_id')
+        if user:
+            queryset = queryset.filter(user=user)
+        return queryset
+
+
+class UserProfileRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+    # authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+
+
+class PasswordChangeView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PasswordChangeSerializer
+
+    def get_object(self):
+        return User.objects.get(pk=self.kwargs.get('user_id'))
+
+    def put(self, request, user_id):
+        self.object = self.get_object()
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.data.get("old_password")
+            if not self.object.check_password(old_password):
+                return Response({"old_password": ["Wrong password."]},
+                                status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            return Response('Password for {} has been succesfully changed'.format(self.object),
+                            status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

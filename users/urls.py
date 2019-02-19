@@ -16,13 +16,20 @@ urlpatterns = [
     # path('token-refresh/', refresh_jwt_token),
     path('password_reset/', user_views.PasswordResetView.as_view()),
     path('password_reset_confirm/', user_views.PasswordResetConfirmView.as_view()),
-    path('user/<int:pk>/retrieve/', user_views.UserProfileRetrieveUpdateDeleteView.as_view()),
-    path('user/<int:pk>/update/', user_views.UserProfileRetrieveUpdateDeleteView.as_view()),
-    path('user/<int:pk>/delete/', user_views.UserProfileRetrieveUpdateDeleteView.as_view()),
+
+    path('password_change/<user_id>/', user_views.PasswordChangeView.as_view()),
+
+    path('user/<int:pk>/retrieve/', user_views.UserRetrieveUpdateDeleteView.as_view()),
+    path('user/<int:pk>/update/', user_views.UserRetrieveUpdateDeleteView.as_view()),
+    path('user/<int:pk>/delete/', user_views.UserRetrieveUpdateDeleteView.as_view()),
+
+    path('user_profile/create/', user_views.UserProfileView.as_view()),
+    path('user_profile/<user_id>/', user_views.UserProfileView.as_view()),
+    path('user_profile/<int:pk>/update/', user_views.UserProfileRetrieveUpdateDeleteView.as_view()),
+    path('user_profile/<int:pk>/delete/', user_views.UserProfileRetrieveUpdateDeleteView.as_view()),
 
     path('credit_card_profile/create/', user_views.CreditCardProfileView.as_view()),
-    path('credit_card_profiles/<int:pk>/', user_views.CreditCardProfileView.as_view()),
-
+    path('credit_card_profile/<user_id>/', user_views.CreditCardProfileView.as_view()),
     path('credit_card_profile/<int:pk>/update/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
     path('credit_card_profile/<int:pk>/delete/', user_views.CreditCardProfileUpdateDeleteView.as_view()),
 
