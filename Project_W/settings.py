@@ -177,18 +177,13 @@ JWT_AUTH = {
 }
 
 SWAGGER_SETTINGS = {
-    # 'LOGIN_URL': 'users:login',
-    # 'LOGOUT_URL': 'users:logout',
-    'USE_SESSION_AUTH': True,
-    'APIS_SORTER': 'alpha',
     'SECURITY_DEFINITIONS': {
-        'api_key': {
-            'type': 'apiKey',
-            'in': 'header',
-            'name': 'Authorization'
+        'basic': {
+            'type': 'basic'
         }
     },
-    'is_authenticated': True,
+    'USE_SESSION_AUTH': True,
+    'JSON_EDITOR': True,
 }
 
 SIMPLE_JWT = {
