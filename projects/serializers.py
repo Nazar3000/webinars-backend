@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from projects.models import Project, Webinar, AutoWebinar, WebinarFakeChatMessage, AutoWebinarFakeChatMessage
+from projects.models import Project, Webinar, WebinarFakeChatMessage
 
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('id', 'user', 'name', 'description', 'is_active', 'cover_time')
+        fields = ('id', 'name', 'description',)
 
 
 class UpdateActivationProjectSerializer(serializers.ModelSerializer):
@@ -17,12 +17,6 @@ class UpdateActivationProjectSerializer(serializers.ModelSerializer):
 class WebinarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Webinar
-        fields = '__all__'
-
-
-class AutoWebinarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AutoWebinar
         fields = '__all__'
 
 
@@ -48,12 +42,6 @@ class WebinarChatActivateSerializer(WebinarChatActivateBase):
         fields = ('active_chats', )
 
 
-class AutoWebinarChatActivateSerializer(WebinarChatActivateBase):
-    class Meta:
-        model = AutoWebinar
-        fields = ('active_chats', )
-
-
 class WebinarFakeChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebinarFakeChatMessage
@@ -64,16 +52,3 @@ class WebinarFakeMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebinarFakeChatMessage
         exclude = ('name', 'nickname', )
-
-
-class AutoWebinarFakeMessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AutoWebinarFakeChatMessage
-        exclude = ('name', 'nickname', )
-
-
-class AutoWebinarFakeChatMessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AutoWebinarFakeChatMessage
-        fields = '__all__'
-

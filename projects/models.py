@@ -6,29 +6,26 @@ from multiselectfield import MultiSelectField
 from projects.utils.generator import generate_nickname, generate_name
 
 
-class Project(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='User')
-    name = models.CharField(max_length=255, verbose_name='Project name')
-    description = models.TextField(max_length=4095, null=True, blank=True, verbose_name='Description')
+class TimeStampedModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated date')
 
-    is_active = models.BooleanField(default=True, verbose_name='Is active?')
-    cover_time = models.PositiveIntegerField(null=True, blank=True,
-                                             verbose_name='Cover time before video starts (in seconds)')
-
     class Meta:
-        verbose_name = 'Project'
-        verbose_name_plural = 'Projects'
+        abstract = True
+
+
+class Project(TimeStampedModel):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='User')
+    name = models.CharField(max_length=255, verbose_name='Project name')
+    description = models.TextField(null=True, blank=True, verbose_name='Description')
+
+    is_active = models.BooleanField(default=True, verbose_name='Is active?')
 
     def __str__(self):
-        return '{}'.format(self.name)
-
-    def __unicode__(self):
         return self.name
 
 
-class WebinarBase(models.Model):
+class Webinar(models.Model):
     CHATS = (
         ('private', 'private'),
         ('public', 'public'),
@@ -42,12 +39,16 @@ class WebinarBase(models.Model):
         ('image', 'image'),
     )
 
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    video = models.FileField(
+        upload_to='projects/webinar/video/',
+        blank=True,
+        null=True,
+        verbose_name='Webinar video')
+
     title = models.CharField(max_length=255, null=True, blank=True, verbose_name='Title')
     description = models.TextField(max_length=4095, null=True, blank=True, verbose_name='Description')
     is_active = models.BooleanField(default=False, verbose_name='Is active?')
-
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
-    updated = models.DateTimeField(auto_now=True, verbose_name='Updated date')
 
     active_chats = MultiSelectField(
         choices=CHATS,
@@ -99,14 +100,12 @@ class WebinarBase(models.Model):
         null=True,
         verbose_name='Webinar image cover'
     )
-
-    class Meta:
-        abstract = True
+    cover_time = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='Cover time before video starts (in seconds)')
 
     def __str__(self):
-        return '{}'.format(self.title)
-
-    def __unicode__(self):
         return self.title
 
     @property
@@ -115,25 +114,6 @@ class WebinarBase(models.Model):
             return randint(self.min_fake_user_count, self.max_fake_user_count)
         else:
             return None
-
-
-class AutoWebinar(WebinarBase):
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-
-    # TODO: Write the url or smth else which associated with streaming video.
-
-    class Meta:
-        verbose_name = 'Auto Webinar'
-        verbose_name_plural = 'Auto Webinars'
-
-
-class Webinar(WebinarBase):
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    video = models.FileField(
-        upload_to='projects/webinar/video/',
-        blank=True,
-        null=True,
-        verbose_name='Webinar video')
 
     class Meta:
         verbose_name = 'Webinar'
@@ -150,24 +130,25 @@ class FakeChatMessageBase(models.Model):
     class Meta:
         abstract = True
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(self, *args, **kwargs):
         self.name = generate_name(locale_list=['en', 'uk_UA'])
         self.nickname = generate_nickname()
-        super(FakeChatMessageBase, self).save(force_insert=False, force_update=False, using=None, update_fields=None)
+        super(FakeChatMessageBase, self).save(*args, **kwargs)
 
 
 class WebinarFakeChatMessage(FakeChatMessageBase):
     webinar = models.ForeignKey(Webinar, on_delete=models.CASCADE, verbose_name='Webinar')
+    name = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake name')
+    nickname = models.CharField(max_length=63, null=True, blank=True, verbose_name='Fake nickname')
+    message = models.TextField(max_length=4095, null=True, blank=True)
+    display_time = models.DateTimeField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created date')
 
     class Meta:
         verbose_name = 'Fake webinar message'
-        verbose_name_plural = 'Fake webinar messages '
+        verbose_name_plural = 'Fake webinar messages'
 
-
-class AutoWebinarFakeChatMessage(FakeChatMessageBase):
-    auto_webinar = models.ForeignKey(AutoWebinar, on_delete=models.CASCADE, verbose_name='Auto webinar')
-
-    class Meta:
-        verbose_name = 'Fake autowebinar message'
-        verbose_name_plural = 'Fake autowebinar messages'
+    def save(self, *args, **kwargs):
+        self.name = generate_name(locale_list=['en', 'uk_UA'])
+        self.nickname = generate_nickname()
+        super(FakeChatMessageBase, self).save(*args, **kwargs)

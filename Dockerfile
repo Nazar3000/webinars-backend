@@ -5,8 +5,7 @@ WORKDIR /app
 COPY . /app
 
 RUN set -xe \
-    && pip3 install -r requirements.txt \
-	&& . ./env.sh
+    && pip3 install -r requirements.txt
 
 EXPOSE 8000
 

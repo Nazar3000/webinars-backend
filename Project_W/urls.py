@@ -19,12 +19,11 @@ from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Project_W API')
 
-app_name = 'api'
-
 urlpatterns = [
-    path('api/v1/docs/', schema_view, name='docs'),
     path('admin/', admin.site.urls),
-    path('api/v1/', include('users.urls')),
-    path('api/v1/projects/', include('projects.urls')),
-    path('api/v1/bots/', include('bots.urls')),
+    path('docs/', schema_view, name='docs'),
+
+    path('api/<version>/', include('users.urls')),
+    path('api/<version>/projects/', include('projects.urls')),
+    path('api/<version>/bots/', include('bots.urls')),
 ]
