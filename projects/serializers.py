@@ -52,3 +52,8 @@ class WebinarFakeMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebinarFakeChatMessage
         exclude = ('name', 'nickname', )
+
+
+class WebinarPermissionSerializer(serializers.Serializer):
+    slug = serializers.SlugField(max_length=16)
+    user_id = serializers.IntegerField()

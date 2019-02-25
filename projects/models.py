@@ -25,7 +25,7 @@ class Project(TimeStampedModel):
         return self.name
 
 
-class Webinar(models.Model):
+class Webinar(TimeStampedModel):
     CHATS = (
         ('private', 'private'),
         ('public', 'public'),
@@ -39,7 +39,9 @@ class Webinar(models.Model):
         ('image', 'image'),
     )
 
+    slug = models.SlugField(max_length=16, primary_key=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    viewers = models.ManyToManyField(CustomUser, null=True, blank=True)
     video = models.FileField(
         upload_to='projects/webinar/video/',
         blank=True,
@@ -106,7 +108,7 @@ class Webinar(models.Model):
         verbose_name='Cover time before video starts (in seconds)')
 
     def __str__(self):
-        return self.title
+        return '{} {}'.format(self.slug, self.title)
 
     @property
     def fake_user_count(self):
