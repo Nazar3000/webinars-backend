@@ -15,11 +15,11 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'confirm_password')
-
-    confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
         password = data.get('password')
@@ -51,20 +51,6 @@ class UserSerializer(serializers.ModelSerializer):
         })
         send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, (email,))
         return user
-
-
-def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-    else:
-        return HttpResponse('Activation link is invalid!')
 
 
 class PasswordResetSerializer(serializers.Serializer):

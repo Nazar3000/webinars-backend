@@ -41,7 +41,7 @@ class Webinar(TimeStampedModel):
 
     slug = models.SlugField(max_length=16, primary_key=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    viewers = models.ManyToManyField(CustomUser, null=True, blank=True)
+    viewers = models.ManyToManyField(CustomUser, blank=True)
     video = models.FileField(
         upload_to='projects/webinar/video/',
         blank=True,

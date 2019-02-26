@@ -19,7 +19,7 @@ services:
       - '8000:8000'
     tty: true
     stdin_open: true
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000 --settings=Project_W.settings.dev
 networks:
   default:
     external:

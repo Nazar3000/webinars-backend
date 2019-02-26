@@ -1,16 +1,19 @@
+from django.http import HttpResponse
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+
+from users.tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
     CreditCardProfile, CreditCardProfileSerializer, UserProfile, UserProfileSerializer, PasswordChangeSerializer
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
-from rest_framework import permissions, status
+from rest_framework import permissions, status, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -50,51 +53,83 @@ class PasswordResetConfirmView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
-    serializer_class = UserUpdateSerializer
-    queryset = User.objects.all()
-
-
-class CreditCardProfileView(ListCreateAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
-    model = CreditCardProfile
-    serializer_class = CreditCardProfileSerializer
-
-    def get_queryset(self):
-        queryset = CreditCardProfile.objects.all()
-        user = self.kwargs.get('user_id')
-        if user:
-            queryset = queryset.filter(user=user)
-        return queryset
-
-
-class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JSONWebTokenAuthentication,)
-    serializer_class = CreditCardProfileSerializer
-    queryset = CreditCardProfile.objects.all()
-
-
-@api_view()
-def activate_user(request, user_id):
+def activate(request, uidb64, token, *args, **kwargs):
     try:
-        user = User.objects.get(pk=user_id)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None:
+    if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return Response('Thank you for your email confirmation. Now you can login your account.',
-                        status=status.HTTP_200_OK)
+        return HttpResponse('Thank you for your email confirmation. Now you can log in to your account.')
     else:
-        return Response('User does not exist!', status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse('Activation link is invalid!')
 
 
-class UserProfileView(ListCreateAPIView):
-    # authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
-    model = UserProfile
+# class UserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+#     authentication_classes = (JSONWebTokenAuthentication,)
+#     serializer_class = UserUpdateSerializer
+#     queryset = User.objects.all()
+
+
+# class CreditCardProfileView(ListCreateAPIView):
+#     authentication_classes = (JSONWebTokenAuthentication,)
+#     model = CreditCardProfile
+#     serializer_class = CreditCardProfileSerializer
+#
+#     def get_queryset(self):
+#         queryset = CreditCardProfile.objects.all()
+#         user = self.kwargs.get('user_id')
+#         if user:
+#             queryset = queryset.filter(user=user)
+#         return queryset
+#
+#
+# class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+#     authentication_classes = (JSONWebTokenAuthentication,)
+#     serializer_class = CreditCardProfileSerializer
+#     queryset = CreditCardProfile.objects.all()
+
+
+# @api_view()
+# def activate_user(request, user_id, *args, **kwargs):
+#     try:
+#         user = User.objects.get(pk=user_id)
+#     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+#     if user is not None:
+#         user.is_active = True
+#         user.save()
+#         return Response('Thank you for your email confirmation. Now you can login your account.',
+#                         status=status.HTTP_200_OK)
+#     else:
+#         return Response('User does not exist!', status=status.HTTP_400_BAD_REQUEST)
+
+
+# class UserProfileView(ListCreateAPIView):
+#     # authentication_classes = (JSONWebTokenAuthentication,)
+#     permission_classes = (permissions.AllowAny,)
+#     model = UserProfile
+#     serializer_class = UserProfileSerializer
+#
+#     def get_queryset(self):
+#         queryset = UserProfile.objects.all()
+#         user = self.kwargs.get('user_id')
+#         if user:
+#             queryset = queryset.filter(user=user)
+#         return queryset
+
+
+class UserProfileViewSet(mixins.CreateModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.DestroyModelMixin,
+                         GenericViewSet):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserProfileSerializer
+    # queryset = UserProfile.objects.all()
 
     def get_queryset(self):
         queryset = UserProfile.objects.all()
@@ -102,13 +137,6 @@ class UserProfileView(ListCreateAPIView):
         if user:
             queryset = queryset.filter(user=user)
         return queryset
-
-
-class UserProfileRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    # authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
 
 
 class PasswordChangeView(APIView):
