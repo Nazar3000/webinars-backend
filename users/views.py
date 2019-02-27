@@ -1,19 +1,16 @@
 from django.http import HttpResponse
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.contrib.auth import get_user_model
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from users.tokens import account_activation_token
-from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, UserUpdateSerializer, \
-    CreditCardProfile, CreditCardProfileSerializer, UserProfile, UserProfileSerializer, PasswordChangeSerializer
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, \
+    UserProfileSerializer, PasswordChangeSerializer
+from rest_framework.generics import CreateAPIView
 from rest_framework import permissions, status, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework.decorators import api_view
 
 User = get_user_model()
 
@@ -121,22 +118,15 @@ def activate(request, uidb64, token, *args, **kwargs):
 #         return queryset
 
 
-class UserProfileViewSet(mixins.CreateModelMixin,
-                         mixins.RetrieveModelMixin,
+class UserProfileViewSet(mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin,
                          GenericViewSet):
-    authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserProfileSerializer
-    # queryset = UserProfile.objects.all()
 
-    def get_queryset(self):
-        queryset = UserProfile.objects.all()
-        user = self.kwargs.get('user_id')
-        if user:
-            queryset = queryset.filter(user=user)
-        return queryset
+    def get_object(self):
+        return self.request.user
 
 
 class PasswordChangeView(APIView):

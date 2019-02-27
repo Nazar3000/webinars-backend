@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Webinar',
             fields=[
-                ('slug',models.SlugField(max_length=16, primary_key=True, serialize=False, verbose_name='Slug')),
+                ('slug', models.SlugField(max_length=16, primary_key=True, serialize=False, verbose_name='Slug')),
                 ('title', models.CharField(blank=True, max_length=255, null=True, verbose_name='Title')),
                 ('description', models.TextField(blank=True, max_length=4095, null=True, verbose_name='Description')),
                 ('is_active', models.BooleanField(default=False, verbose_name='Is active?')),

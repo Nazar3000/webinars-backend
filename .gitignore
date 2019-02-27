@@ -104,3 +104,4 @@ ENV/
 .idea/
 
 env.json
+media/

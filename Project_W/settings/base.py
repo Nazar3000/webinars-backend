@@ -16,7 +16,7 @@ import json
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '..')
 
 
 with open('env.json') as f:
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'multiselectfield',
     'positions',
+    'timezone_field',
 
     # apps
     'users',
@@ -82,7 +83,7 @@ ROOT_URLCONF = 'Project_W.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

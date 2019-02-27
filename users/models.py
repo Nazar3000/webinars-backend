@@ -1,6 +1,9 @@
+from timezone_field import TimeZoneField
+
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
 
 class MyUserManager(BaseUserManager):
@@ -48,7 +51,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     role = models.CharField(choices=ROLES, max_length=6, default='trial')
 
-    # TODO: add time zone to model
+    username_validator = UnicodeUsernameValidator()
+    username = models.CharField(
+        'username',
+        max_length=150,
+        unique=True,
+        help_text='150 characters or fewer. Letters, digits and @/./+/-/_ only.',
+        validators=[username_validator],
+        error_messages={
+            'unique': "A user with that username already exists.",
+        },
+        null=True,
+        blank=True
+    )
+    avatar = models.ImageField(blank=True, null=True, upload_to='user_profiles/avatars')
+    timezone = TimeZoneField(default='Europe/London')
 
     USERNAME_FIELD = 'email'
     objects = MyUserManager()
@@ -60,9 +77,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return '{}'.format(self.email)
-
-    def __unicode__(self):
-        return self.email
 
     def get_full_name(self):
         return self.email
@@ -90,15 +104,3 @@ class CreditCardProfile(models.Model):
 
     def __str__(self):
         return '{}-{}'.format(self.cc_number, self.user)
-
-
-class UserProfile(models.Model):
-    avatar = models.ImageField(blank=True, null=True, upload_to='user_profiles/avatars')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "User Profile"
-        verbose_name_plural = "User Profiles"
-
-    def __str__(self):
-        return '{}'.format(self.user)

@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponse
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 import django.contrib.auth.password_validation as validators
@@ -8,32 +8,20 @@ from django.conf import settings
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
+
+from projects.mixins import UserSerializerMixin, RequireTogetherFields
 from .tokens import account_activation_token, password_reset_token
-from .models import CreditCardProfile, UserProfile
+from .models import CreditCardProfile
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'confirm_password')
-
-    def validate(self, data):
-        password = data.get('password')
-        errors = dict()
-        try:
-            validators.validate_password(password=password)
-        except exceptions.ValidationError as e:
-            errors['password'] = list(e.messages)
-        if errors:
-            raise serializers.ValidationError(errors)
-        if data.get('password') != data.get('confirm_password'):
-            errors['password'] = "Those passwords don't match."
-            raise serializers.ValidationError(errors)
-        return super(UserSerializer, self).validate(data)
 
     def create(self, validated_data):
         email = validated_data['email']
@@ -131,10 +119,10 @@ class PasswordChangeSerializer(serializers.Serializer):
         return super(PasswordChangeSerializer, self).validate(data)
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('email',)
+# class UserUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('email',)
 
 
 class CreditCardProfileSerializer(serializers.ModelSerializer):
@@ -143,7 +131,27 @@ class CreditCardProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+    confirm_password = serializers.CharField(write_only=True, required=False)
+    avatar_base64 = Base64ImageField(source='avatar', required=False)
+
     class Meta:
-        model = UserProfile
-        fields = '__all__'
+        model = User
+        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_base64', 'username', 'timezone',)
+
+    REQUIRED_TOGETHER = ('password', 'confirm_password',)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['timezone'] = ret['timezone'].zone
+        return ret
+
+    def validate(self, data):
+        return super().validate(data)
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        if password:
+            instance.set_password(password)
+        return super().update(instance, validated_data)
