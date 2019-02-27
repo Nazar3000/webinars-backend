@@ -199,3 +199,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
     'ROTATE_REFRESH_TOKENS': True,
 }
+
+LOGIN_URL = 'admin:login'
+LOGOUT_URL = 'admin:logout'
