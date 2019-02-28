@@ -37,6 +37,8 @@ urlpatterns += [
     path('login/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token_refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
+    path('devices/', views.DeviceDataListView.as_view()),
+
     # path('credit_card_profile/create/', views.CreditCardProfileView.as_view()),
     # path('credit_card_profile/<user_id>/', views.CreditCardProfileView.as_view()),
     # path('credit_card_profile/<int:pk>/update/', views.CreditCardProfileUpdateDeleteView.as_view()),

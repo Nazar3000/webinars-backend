@@ -2,10 +2,11 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import GenericViewSet
 
+from users.models import DeviceData
 from users.tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer, PasswordResetConfirm, \
-    UserProfileSerializer, PasswordChangeSerializer
-from rest_framework.generics import CreateAPIView
+    UserProfileSerializer, PasswordChangeSerializer, DeviceDataSerializer
+from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework import permissions, status, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -114,3 +115,11 @@ class PasswordChangeView(APIView):
             return Response('Password for {} has been succesfully changed'.format(self.object),
                             status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeviceDataListView(ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = DeviceDataSerializer
+
+    def get_queryset(self):
+        return DeviceData.objects.filter(user=self.request.user)

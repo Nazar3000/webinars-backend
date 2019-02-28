@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 
 from projects.mixins import UserSerializerMixin, RequireTogetherFields
 from .tokens import account_activation_token, password_reset_token
-from .models import CreditCardProfile
+from .models import CreditCardProfile, DeviceData
 
 User = get_user_model()
 
@@ -132,12 +132,6 @@ class PasswordChangeSerializer(serializers.Serializer):
         return super(PasswordChangeSerializer, self).validate(data)
 
 
-# class UserUpdateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('email',)
-
-
 class CreditCardProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditCardProfile
@@ -164,3 +158,15 @@ class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializ
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
+
+
+class DeviceDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeviceData
+        fields = (
+            'user_agent',
+            'ip_address',
+            'last_activity',
+            'country',
+            'region',
+        )
