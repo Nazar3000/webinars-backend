@@ -38,7 +38,6 @@ class DeviceDataMiddleware:
                 device.country = city_dict['country_name']
                 device.region = city_dict['region']
 
-                request.user.timezone = city_dict['time_zone']
                 request.user.save()
             device.save()
 

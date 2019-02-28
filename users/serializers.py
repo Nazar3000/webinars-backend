@@ -31,15 +31,18 @@ class TimezoneField(serializers.Field):
 class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
+    time_zone = TimezoneField(source='timezone')
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password')
+        fields = ('id', 'email', 'password', 'confirm_password', 'time_zone')
 
     def create(self, validated_data):
         email = validated_data['email']
+        time_zone = validated_data['time_zone']
         user = User.objects.create(
-            email=email
+            email=email,
+            timezone=time_zone
         )
         user.set_password(validated_data['password'])
         user.save()
