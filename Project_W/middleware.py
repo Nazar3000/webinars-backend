@@ -29,6 +29,7 @@ class DeviceDataMiddleware:
                 ip_address=ip,
                 user_agent=request.META['HTTP_USER_AGENT']
             )
+            device.last_activity = datetime.now()
 
             g = GeoIP2()
             with suppress(AddressNotFoundError):

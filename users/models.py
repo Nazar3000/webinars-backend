@@ -90,6 +90,7 @@ class DeviceData(models.Model):
 
     user_agent = models.CharField(max_length=2048)
     ip_address = models.GenericIPAddressField()
+    last_activity = models.DateTimeField()
     country = models.CharField(max_length=64, default='United Kingdom')
     region = models.CharField(max_length=64, default='London')
 
