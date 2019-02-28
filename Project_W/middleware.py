@@ -44,7 +44,7 @@ class DeviceDataMiddleware:
                 city_dict = g.city(ip)
 
                 device.country = city_dict['country_name']
-                device.region = city_dict['region']
+                device.region = city_dict['city']
 
                 request.user.save()
             device.save()
