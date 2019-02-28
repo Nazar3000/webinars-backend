@@ -15,15 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_swagger.views import get_swagger_view
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework.permissions import IsAdminUser
 from django.conf import settings
 from django.conf.urls.static import static
 
-schema_view = get_swagger_view(title='Project_W API')
+schema_view = get_schema_view(
+    openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+    ),
+    permission_classes=(IsAdminUser,),
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('docs/', schema_view, name='docs'),
+    path('docs/', schema_view.with_ui(), name='docs'),
 
     path('api/<version>/', include('users.urls')),
     path('api/<version>/projects/', include('projects.urls')),

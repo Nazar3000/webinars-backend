@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from projects.models import Project, Webinar
+from projects.models import Project, Webinar, WebinarFakeChatMessage
 from rest_framework.permissions import AllowAny
 from projects.serializers import ProjectSerializer, UpdateActivationProjectSerializer, WebinarSerializer, \
     UserCountSerializer, WebinarChatActivateSerializer, WebinarFakeMessageSerializer, WebinarFakeChatMessageSerializer, \
@@ -61,6 +61,8 @@ class ProjectViewSet(ModelViewSet):
 
 
 class FakeChatMessageViewSet(ModelViewSet):
+    queryset = WebinarFakeChatMessage.objects.all()
+
     def get_serializer_class(self):
         if self.action in ['list', 'destroy']:
             return WebinarFakeChatMessageSerializer

@@ -64,12 +64,6 @@ def activate(request, uidb64, token, *args, **kwargs):
         return HttpResponse('Activation link is invalid!')
 
 
-# class UserRetrieveUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-#     authentication_classes = (JSONWebTokenAuthentication,)
-#     serializer_class = UserUpdateSerializer
-#     queryset = User.objects.all()
-
-
 # class CreditCardProfileView(ListCreateAPIView):
 #     authentication_classes = (JSONWebTokenAuthentication,)
 #     model = CreditCardProfile
@@ -87,35 +81,6 @@ def activate(request, uidb64, token, *args, **kwargs):
 #     authentication_classes = (JSONWebTokenAuthentication,)
 #     serializer_class = CreditCardProfileSerializer
 #     queryset = CreditCardProfile.objects.all()
-
-
-# @api_view()
-# def activate_user(request, user_id, *args, **kwargs):
-#     try:
-#         user = User.objects.get(pk=user_id)
-#     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-#     if user is not None:
-#         user.is_active = True
-#         user.save()
-#         return Response('Thank you for your email confirmation. Now you can login your account.',
-#                         status=status.HTTP_200_OK)
-#     else:
-#         return Response('User does not exist!', status=status.HTTP_400_BAD_REQUEST)
-
-
-# class UserProfileView(ListCreateAPIView):
-#     # authentication_classes = (JSONWebTokenAuthentication,)
-#     permission_classes = (permissions.AllowAny,)
-#     model = UserProfile
-#     serializer_class = UserProfileSerializer
-#
-#     def get_queryset(self):
-#         queryset = UserProfile.objects.all()
-#         user = self.kwargs.get('user_id')
-#         if user:
-#             queryset = queryset.filter(user=user)
-#         return queryset
 
 
 class UserProfileViewSet(mixins.RetrieveModelMixin,

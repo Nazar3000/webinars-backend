@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 
     # libs
     'rest_framework',
-    'rest_framework_swagger',
+    'drf_yasg',
     'multiselectfield',
     'positions',
     'timezone_field',
@@ -151,25 +151,25 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
     'PAGE_SIZE': 10,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DATE_INPUT_FORMATS': ('%m/%Y',),
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning'
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_RENDERER_CLASSES': (
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
 }
 
 
 HOST_NAME = os.getenv('HOST_NAME')
 
 AUTH_USER_MODEL = 'users.CustomUser'
-
-
-JWT_AUTH = {
-    'JWT_ALLOW_REFRESH': True,
-}
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {

@@ -16,12 +16,22 @@ from .models import CreditCardProfile
 User = get_user_model()
 
 
+class TimezoneField(serializers.Field):
+    """Take the timezone object and make it JSON serializable"""
+    def to_representation(self, obj):
+        return obj.zone
+
+    def to_internal_value(self, data):
+        return data
+
+
 class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
+    time_zone = TimezoneField(source='timezone')
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password')
+        fields = ('id', 'email', 'password', 'confirm_password', 'time_zone')
 
     def create(self, validated_data):
         email = validated_data['email']
@@ -135,17 +145,13 @@ class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializ
     password = serializers.CharField(write_only=True, required=False)
     confirm_password = serializers.CharField(write_only=True, required=False)
     avatar_base64 = Base64ImageField(source='avatar', required=False)
+    time_zone = TimezoneField(source='timezone')
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_base64', 'username', 'timezone',)
+        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_base64', 'username', 'time_zone',)
 
     REQUIRED_TOGETHER = ('password', 'confirm_password',)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret['timezone'] = ret['timezone'].zone
-        return ret
 
     def validate(self, data):
         return super().validate(data)
