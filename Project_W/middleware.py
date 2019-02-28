@@ -24,11 +24,19 @@ class DeviceDataMiddleware:
 
         if request.user.is_authenticated:
             ip = self.get_client_ip(request)
-            device, created = DeviceData.objects.get_or_create(
-                user=request.user,
-                ip_address=ip,
-                user_agent=request.META['HTTP_USER_AGENT']
-            )
+            try:
+                device = DeviceData.objects.get(
+                    user=request.user,
+                    ip_address=ip,
+                    user_agent=request.META['HTTP_USER_AGENT']
+                )
+            except DeviceData.DoesNotExist:
+                device = DeviceData.objects.create(
+                    user=request.user,
+                    ip_address=ip,
+                    user_agent=request.META['HTTP_USER_AGENT'],
+                    last_activity=datetime.now()
+                )
             device.last_activity = datetime.now()
 
             g = GeoIP2()
