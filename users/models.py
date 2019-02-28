@@ -85,6 +85,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class DeviceData(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    user_agent = models.CharField(max_length=2048)
+    ip_address = models.GenericIPAddressField()
+    country = models.CharField(max_length=64, default='United Kingdom')
+    region = models.CharField(max_length=64, default='London')
+
+    class Meta:
+        verbose_name = "Device Data"
+        verbose_name_plural = "Device Data instances"
+
+    def __str__(self):
+        return '{}: {}'.format(self.country, self.region)
+
+
 class CreditCardProfile(models.Model):
     cc_number = models.CharField(max_length=16,
                                  validators=(RegexValidator(r'^\d{13,16}$'),),

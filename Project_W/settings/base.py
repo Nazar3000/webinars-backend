@@ -63,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'Project_W.middleware.DeviceDataMiddleware',
 ]
 
 ROOT_URLCONF = 'Project_W.urls'
@@ -189,3 +191,5 @@ SIMPLE_JWT = {
 
 LOGIN_URL = 'admin:login'
 LOGOUT_URL = 'admin:logout'
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geo_lite2_data')

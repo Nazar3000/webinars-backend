@@ -1,10 +1,16 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CreditCardProfile
+from .models import CustomUser, CreditCardProfile, DeviceData
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+
 
 class CreditCardProfileInline(admin.TabularInline):
     model = CreditCardProfile
+    extra = 0
+
+
+class DeviceDataInline(admin.TabularInline):
+    model = DeviceData
     extra = 0
 
 
@@ -15,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['email', 'role', 'is_active']
     readonly_fields = ('date_joined',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'date_joined', 'role')}),
+        (None, {'fields': ('email', 'password', 'date_joined', 'role', 'timezone')}),
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'is_active')}),
     )
     add_fieldsets = (
@@ -25,7 +31,8 @@ class CustomUserAdmin(UserAdmin):
          ),
     )
     ordering = ('email',)
-    inlines = (CreditCardProfileInline,)
+    inlines = (CreditCardProfileInline, DeviceDataInline)
+
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(CreditCardProfile)

@@ -19,19 +19,22 @@ User = get_user_model()
 class TimezoneField(serializers.Field):
     """Take the timezone object and make it JSON serializable"""
     def to_representation(self, obj):
-        return obj.zone
+        try:
+            return obj.zone
+        except AttributeError:
+            return obj
 
     def to_internal_value(self, data):
         return data
 
 
 class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-    time_zone = TimezoneField(source='timezone')
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password', 'time_zone')
+        fields = ('id', 'email', 'password', 'confirm_password')
 
     def create(self, validated_data):
         email = validated_data['email']
