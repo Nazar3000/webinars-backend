@@ -34,16 +34,12 @@ class Webinar(TimeStampedModel):
         ('fake', 'fake'),
         ('real', 'real')
     )
-    COVER_TYPES = (
-        ('video', 'video'),
-        ('image', 'image'),
-    )
 
     slug = models.SlugField(max_length=16, primary_key=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     viewers = models.ManyToManyField(CustomUser, blank=True)
     video = models.FileField(
-        upload_to='projects/webinar/video/',
+        upload_to='projects/webinar/video',
         blank=True,
         null=True,
         verbose_name='Webinar video')
@@ -61,8 +57,7 @@ class Webinar(TimeStampedModel):
         verbose_name='Active chats'
     )
 
-    # TODO: 'date_activate' must be rewritten:
-    date_activate = models.DateTimeField(null=True, blank=True, verbose_name="Activate date")
+    stream_datetime = models.DateTimeField()
 
     user_counter = models.CharField(
         choices=USER_COUNTER_TYPES,
@@ -83,21 +78,15 @@ class Webinar(TimeStampedModel):
         blank=True,
         verbose_name='Maximum value for fake people count'
     )
-    cover_type = models.CharField(
-        max_length=5,
-        choices=COVER_TYPES,
-        null=True,
-        blank=True,
-        verbose_name="Cover before video"
-    )
+
     video_cover = models.FileField(
-        upload_to='projects/webinar/video_cover/',
+        upload_to='projects/webinar/video_cover',
         blank=True,
         null=True,
         verbose_name='Webinar video cover'
     )
     image_cover = models.ImageField(
-        upload_to='projects/webinar/image_cover/',
+        upload_to='projects/webinar/image_cover',
         blank=True,
         null=True,
         verbose_name='Webinar image cover'

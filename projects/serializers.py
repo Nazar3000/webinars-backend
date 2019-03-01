@@ -26,7 +26,16 @@ class UpdateActivationProjectSerializer(serializers.ModelSerializer):
 class WebinarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Webinar
-        fields = '__all__'
+        fields = (
+            'slug',
+            'video',
+            'title',
+            'description',
+            'stream_datetime',
+            'video_cover',
+            'image_cover',
+            'cover_time',
+        )
 
 
 class UserCountSerializer(serializers.Serializer):

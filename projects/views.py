@@ -67,21 +67,13 @@ class ProjectViewSet(ModelViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
-class FakeChatMessageViewSet(ModelViewSet):
-    queryset = WebinarFakeChatMessage.objects.all()
-
-    def get_serializer_class(self):
-        if self.action in ['list', 'destroy']:
-            return WebinarFakeChatMessageSerializer
-        else:
-            return WebinarFakeMessageSerializer
-
-
 class WebinarViewSet(WebinarMixin, ModelViewSet):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     serializer_class = WebinarSerializer
-    queryset = Webinar.objects.all()
+
+    def get_queryset(self):
+        return Webinar.objects.filter(project=self.kwargs['project_pk'])
 
     def get_serializer_class(self):
         if self.action == 'activate_chats':
@@ -90,3 +82,20 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
             return UserCountSerializer
         else:
             return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class FakeChatMessageViewSet(ModelViewSet):
+    def get_queryset(self):
+        return WebinarFakeChatMessage.objects.filter(webinar=self.kwargs['webinar_pk'])
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'destroy']:
+            return WebinarFakeChatMessageSerializer
+        else:
+            return WebinarFakeMessageSerializer
