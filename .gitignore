@@ -105,3 +105,4 @@ ENV/
 
 env.json
 media/
+static/

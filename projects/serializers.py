@@ -7,6 +7,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ('id', 'name', 'description',)
 
+    def __init__(self, *args, **kwargs):
+        if 'user' in kwargs.keys():
+            self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def create(self, validated_data):
+        validated_data['user'] = self.user
+        return super().create(validated_data)
+
 
 class UpdateActivationProjectSerializer(serializers.ModelSerializer):
     class Meta:

@@ -181,6 +181,7 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': True,
     'JSON_EDITOR': True,
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'Project_W.urls.CategorizedAutoSchema',
 }
 
 SIMPLE_JWT = {

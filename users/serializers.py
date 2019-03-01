@@ -38,8 +38,9 @@ class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'confirm_password', 'time_zone')
 
     def create(self, validated_data):
+        print(validated_data)
         email = validated_data['email']
-        time_zone = validated_data['time_zone']
+        time_zone = validated_data['timezone']
         user = User.objects.create(
             email=email,
             timezone=time_zone

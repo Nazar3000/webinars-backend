@@ -29,6 +29,13 @@ class ProjectViewSet(ModelViewSet):
             return WebinarPermissionSerializer
         return ProjectSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, user=request.user)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     @action(detail=True, methods=['patch'])
     def activate(self, request, *args, **kwargs):
         serializer = self.get_serializer(instance=self.get_object(), data=request.data)
