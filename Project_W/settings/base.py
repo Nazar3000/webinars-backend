@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'multiselectfield',
     'positions',
     'timezone_field',
+    'corsheaders',
 
     # apps
     'users',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -194,3 +196,6 @@ LOGIN_URL = 'admin:login'
 LOGOUT_URL = 'admin:logout'
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geo_lite2_data')
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
