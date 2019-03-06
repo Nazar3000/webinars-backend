@@ -10,8 +10,6 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from rest_framework.exceptions import ValidationError
-from timezone_field import TimeZoneField
-from timezone_field.utils import is_pytz_instance
 
 from projects.mixins import UserSerializerMixin, RequireTogetherFields
 from .tokens import account_activation_token, password_reset_token
@@ -151,23 +149,16 @@ class CreditCardProfileSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
     confirm_password = serializers.CharField(write_only=True, required=False)
-    avatar_base64 = Base64ImageField(source='avatar', required=False)
+    avatar_image = Base64ImageField(source='avatar', required=False)
     time_zone = TimezoneField(source='timezone', required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_base64', 'username', 'time_zone',)
+        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_image', 'username', 'time_zone',)
 
     REQUIRED_TOGETHER = ('password', 'confirm_password',)
 
-    # def validate_time_zone(self, value):
-    #     if value in pytz.all_timezones:
-    #         return value
-    #     else:
-    #         raise ValidationError("Invalid timezone '%s'" % value)
-
     def update(self, instance, validated_data):
-        print(validated_data)
         password = validated_data.pop('password', None)
         if password:
             instance.set_password(password)
