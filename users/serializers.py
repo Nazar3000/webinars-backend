@@ -51,9 +51,8 @@ class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
-        mail_subject = 'Activate your project_W account.'
+        mail_subject = 'Activate your account.'
         message = render_to_string('account_activation_email.html', {
-            'user': user,
             'domain': settings.HOST_NAME,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             'token': account_activation_token.make_token(user),
