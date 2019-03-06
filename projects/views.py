@@ -83,6 +83,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
         else:
             return self.serializer_class
 
+    # TODO: pass project
     def perform_create(self, serializer):
         serializer.save()
 
@@ -92,7 +93,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
 
 class FakeChatMessageViewSet(ModelViewSet):
     def get_queryset(self):
-        return WebinarFakeChatMessage.objects.filter(webinar=self.kwargs['webinar_pk'])
+        return get_object_or_404(WebinarFakeChatMessage, webinar__pk=self.kwargs.get('webinar_pk'))
 
     def get_serializer_class(self):
         if self.action in ['list', 'destroy']:

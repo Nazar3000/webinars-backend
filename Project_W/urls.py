@@ -29,6 +29,7 @@ class CategorizedAutoSchema(SwaggerAutoSchema):
             operation_keys = operation_keys[1:]
         return super().get_tags(operation_keys)
 
+
 schema_view = get_schema_view(
     openapi.Info(
       title="Webinars API",
