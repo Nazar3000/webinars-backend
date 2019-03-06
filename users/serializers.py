@@ -1,3 +1,4 @@
+import pytz
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -8,6 +9,9 @@ from django.conf import settings
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
+from rest_framework.exceptions import ValidationError
+from timezone_field import TimeZoneField
+from timezone_field.utils import is_pytz_instance
 
 from projects.mixins import UserSerializerMixin, RequireTogetherFields
 from .tokens import account_activation_token, password_reset_token
@@ -24,8 +28,11 @@ class TimezoneField(serializers.Field):
         except AttributeError:
             return obj
 
-    def to_internal_value(self, data):
-        return data
+    def to_internal_value(self, value):
+        if value in pytz.all_timezones:
+            return value
+        else:
+            raise ValidationError("Invalid timezone '%s'" % value)
 
 
 class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
@@ -38,7 +45,6 @@ class UserSerializer(UserSerializerMixin, serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'confirm_password', 'time_zone')
 
     def create(self, validated_data):
-        print(validated_data)
         email = validated_data['email']
         time_zone = validated_data['timezone']
         user = User.objects.create(
@@ -146,7 +152,7 @@ class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializ
     password = serializers.CharField(write_only=True, required=False)
     confirm_password = serializers.CharField(write_only=True, required=False)
     avatar_base64 = Base64ImageField(source='avatar', required=False)
-    time_zone = TimezoneField(source='timezone')
+    time_zone = TimezoneField(source='timezone', required=False)
 
     class Meta:
         model = User
@@ -154,10 +160,14 @@ class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializ
 
     REQUIRED_TOGETHER = ('password', 'confirm_password',)
 
-    def validate(self, data):
-        return super().validate(data)
+    # def validate_time_zone(self, value):
+    #     if value in pytz.all_timezones:
+    #         return value
+    #     else:
+    #         raise ValidationError("Invalid timezone '%s'" % value)
 
     def update(self, instance, validated_data):
+        print(validated_data)
         password = validated_data.pop('password', None)
         if password:
             instance.set_password(password)

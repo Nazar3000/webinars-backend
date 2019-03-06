@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: webinar_user
       POSTGRES_DB: webinar_dev
     ports:
-      - '5431:5431'
+      - '5432:5432'
     tty: true
     stdin_open: true
   django:
@@ -21,14 +21,14 @@ services:
     stdin_open: true
     command: python3 manage.py runserver 0.0.0.0:8000 --settings=Project_W.settings.dev
     environment:
-      ALLOWED_HOSTS: '*'
-      SECRET_KEY: 'huxtio*k7xptq8qc5i-(o4(6-_@+&-ot^0y3^5%np3+o0f5o78'
-      HOST_NAME: 'http://127.0.0.1:8000'
-      DATABASE_NAME: '.webinar_dev'
-      DATABASE_USER: 'webinar_user'
-      DATABASE_PASSWORD: 'pass12pass'
-      DATABASE_HOST: '127.0.0.1'
-      DATABASE_PORT: '5432'
+      - ALLOWED_HOSTS=*
+      - SECRET_KEY=huxtio*k7xptq8qc5i-(o4(6-_@+&-ot^0y3^5%np3+o0f5o78
+      - DATABASE_NAME=webinar_dev
+      - DATABASE_USER=webinar_user
+      - DATABASE_PASSWORD=pass12pass
+      - DATABASE_HOST=postgresdb
+      - DATABASE_PORT=5432
+      - HOST_NAME=http://0.0.0.0:8000
 networks:
   default:
     external:
