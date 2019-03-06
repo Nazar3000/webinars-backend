@@ -73,7 +73,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
     serializer_class = WebinarSerializer
 
     def get_queryset(self):
-        return Webinar.objects.filter(project=self.kwargs['project_pk'])
+        return Webinar.objects.filter(project__pk=self.kwargs.get('project_pk'))
 
     def get_serializer_class(self):
         if self.action == 'activate_chats':
@@ -93,7 +93,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
 
 class FakeChatMessageViewSet(ModelViewSet):
     def get_queryset(self):
-        return get_object_or_404(WebinarFakeChatMessage, webinar__pk=self.kwargs.get('webinar_pk'))
+        return WebinarFakeChatMessage.objects.filter(webinar__pk=self.kwargs.get('webinar_pk'))
 
     def get_serializer_class(self):
         if self.action in ['list', 'destroy']:

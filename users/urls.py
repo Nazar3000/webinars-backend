@@ -14,7 +14,7 @@ class ProfileRouter(routers.SimpleRouter):
     routes = [
         routers.Route(
             url=r'^{prefix}/$',
-            mapping={'get': 'retrieve', 'put': 'update', 'patch': 'update', 'delete': 'destroy'},
+            mapping={'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'},
             name='{basename}-profile',
             detail=True,
             initkwargs={}
