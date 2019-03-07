@@ -8,7 +8,8 @@ services:
       POSTGRES_USER: webinar_user
       POSTGRES_DB: webinar_dev
     ports:
-      - '5432:5432'
+#      - '5432:5432'
+      - 1486
     tty: true
     stdin_open: true
   django:
@@ -27,7 +28,7 @@ services:
       - DATABASE_USER=webinar_user
       - DATABASE_PASSWORD=pass12pass
       - DATABASE_HOST=postgresdb
-      - DATABASE_PORT=5432
+      - DATABASE_PORT=1486
       - HOST_NAME=http://0.0.0.0:8000
 networks:
   default:

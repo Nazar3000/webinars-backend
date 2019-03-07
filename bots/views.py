@@ -1,10 +1,9 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
-from .serializers import TelegramBotSerializer, FacebookBotSerializer, MessagesChainSerializer, BotMessageSerializer, \
-    ViberBotSerializer, WhatsAppBotSerializer
-from .models import TelegramBot, FacebookBot, MessagesChain, BotMessage, ViberBot, WhatsAppBot
+from .serializers import TelegramBotSerializer, FacebookBotSerializer, ViberBotSerializer, WhatsAppBotSerializer
+from .models import TelegramBot, FacebookBot, ViberBot, WhatsAppBot
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .serializers import TelegramBotSerializer, FacebookBotSerializer, MessagesChainSerializer, BotMessageSerializer
-from .models import TelegramBot, FacebookBot, MessagesChain, BotMessage
+from .serializers import TelegramBotSerializer, FacebookBotSerializer
+from .models import TelegramBot, FacebookBot
 
 
 # Telegram
