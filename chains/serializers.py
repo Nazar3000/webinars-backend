@@ -61,16 +61,27 @@ class MessageButtonSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(WritableNestedModelSerializer):
-    links = MessageLinkSerializer(many=True)
-    texts = MessageTextSerializer(many=True)
-    images = MessageImageSerializer(many=True)
-    audios = MessageAudioSerializer(many=True)
-    videos = MessageVideoSerializer(many=True)
-    files = MessageFileSerializer(many=True)
-    delay = MessageDelaySerializer()
-    buttons = MessageButtonSerializer
-
+    links = MessageLinkSerializer(many=True, allow_null=True)
+    texts = MessageTextSerializer(many=True, allow_null=True)
+    images = MessageImageSerializer(many=True, allow_null=True)
+    audios = MessageAudioSerializer(many=True, allow_null=True)
+    videos = MessageVideoSerializer(many=True, allow_null=True)
+    files = MessageFileSerializer(many=True, allow_null=True)
+    delay = MessageDelaySerializer(allow_null=True)
+    buttons = MessageButtonSerializer(many=True, allow_null=True)
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = (
+            'pk',
+            'send_datetime',
+            'chain',
+            'links',
+            'texts',
+            'images',
+            'audios',
+            'videos',
+            'files',
+            'delay',
+            'buttons',
+        )

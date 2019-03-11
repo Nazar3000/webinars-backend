@@ -20,7 +20,7 @@ class Message(models.Model):
     send_datetime = models.DateTimeField(
         verbose_name='Send time'
     )
-    chain = models.ForeignKey(MessagesChain, on_delete=models.CASCADE)
+    chain = models.ForeignKey(MessagesChain, on_delete=models.CASCADE, related_name='chains_message')
 
     class Meta:
         verbose_name = "Bot Message"
@@ -34,7 +34,7 @@ class MessageLink(models.Model):
     message = models.ForeignKey(
         Message, 
         on_delete=models.CASCADE,
-        related_name='message_links'
+        related_name='links'
     )
     link = models.URLField(blank=True, null=True)
     
@@ -50,7 +50,7 @@ class MessageText(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_texts'
+        related_name='texts'
     )
     text = models.TextField(max_length=4096)
 
@@ -66,7 +66,7 @@ class MessageImage(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_images'
+        related_name='images'
     )
     image = models.ImageField(upload_to='messages/images')
 
@@ -82,9 +82,9 @@ class MessageAudio(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_audios'
+        related_name='audios'
     )
-    audio = models.ImageField(upload_to='messages/audio')
+    audio = models.FileField(upload_to='messages/audio')
 
     class Meta:
         verbose_name = 'Message audio'
@@ -98,9 +98,9 @@ class MessageVideo(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_videos'
+        related_name='videos'
     )
-    video = models.ImageField(upload_to='messages/videos')
+    video = models.FileField(upload_to='messages/videos')
 
     class Meta:
         verbose_name = 'Message video'
@@ -114,9 +114,9 @@ class MessageFile(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_files'
+        related_name='files'
     )
-    file = models.ImageField(upload_to='messages/files')
+    file = models.FileField(upload_to='messages/files')
 
     class Meta:
         verbose_name = 'Message file'
@@ -130,7 +130,7 @@ class MessageDelay(models.Model):
     message = models.OneToOneField(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_delays'
+        related_name='delay'
     )
     delay = models.IntegerField(
         verbose_name='Delay time (sec)'
@@ -148,7 +148,7 @@ class MessageButton(models.Model):
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='message_buttons'
+        related_name='buttons'
     )
     title = models.CharField(
         max_length=256,
@@ -161,11 +161,13 @@ class MessageButton(models.Model):
     )
 
     deactivate_chain_id = models.PositiveIntegerField(
-        verbose_name='Deactivate chain ID'
+        verbose_name='Deactivate chain ID',
+        blank=True, null=True,
     )
 
     activate_chain_id = models.PositiveIntegerField(
-        verbose_name='Activate chain ID'
+        verbose_name='Activate chain ID',
+        blank=True, null=True,
     )
 
     # TODO: add some other action for button
