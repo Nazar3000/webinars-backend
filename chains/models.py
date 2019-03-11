@@ -1,5 +1,6 @@
 from django.db import models
 from projects.models import Project
+from chains.managers import MessageUserTemplateManager, MessageServiceTemplateManager, MessagesManager
 
 
 class MessagesChain(models.Model):
@@ -20,11 +21,23 @@ class Message(models.Model):
     send_datetime = models.DateTimeField(
         verbose_name='Send time'
     )
-    chain = models.ForeignKey(MessagesChain, on_delete=models.CASCADE, related_name='chains_message')
+    chain = models.ForeignKey(
+        MessagesChain,
+        on_delete=models.CASCADE,
+        related_name='chains_message',
+        blank=True, null=True,
+    )
+    is_template = models.BooleanField(default=False)
+
+    # managers:
+    objects = models.Manager()
+    messages = MessagesManager()
+    user_templates = MessageUserTemplateManager()
+    service_templates = MessageServiceTemplateManager()
 
     class Meta:
-        verbose_name = "Bot Message"
-        verbose_name_plural = "Bot Messages"
+        verbose_name = "Message"
+        verbose_name_plural = "Messages"
 
     def __str__(self):
         return '{} - {}'.format(self.chain, self.id)

@@ -9,73 +9,95 @@ from .models import MessagesChain, Message, MessageLink, MessageAudio, MessageBu
 class MessageChainSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessagesChain
-        fields = '__all__'
+        fields = (
+            'title',
+            'start_time',
+            'is_active'
+        )
 
 
 class MessageLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageLink
-        fields = '__all__'
+        fields = (
+            'link',
+        )
 
 
 class MessageTextSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageText
-        fields = '__all__'
+        fields = (
+            'text',
+        )
 
 
 class MessageImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageImage
-        fields = '__all__'
+        fields = (
+            'image',
+        )
 
 
 class MessageAudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageAudio
-        fields = '__all__'
+        fields = (
+            'audio',
+        )
 
 
 class MessageVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageVideo
-        fields = '__all__'
+        fields = (
+            'video',
+        )
 
 
 class MessageFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageFile
-        fields = '__all__'
+        fields = (
+            'file',
+        )
 
 
 class MessageDelaySerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageDelay
-        fields = '__all__'
+        fields = (
+            'delay',
+        )
 
 
 class MessageButtonSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageButton
-        fields = '__all__'
+        fields = (
+            'title',
+            'link',
+            'deactivate_chain_id',
+            'activate_chain_id',
+        )
 
 
 class MessageSerializer(WritableNestedModelSerializer):
     links = MessageLinkSerializer(many=True, allow_null=True)
-    texts = MessageTextSerializer(many=True, allow_null=True)
-    images = MessageImageSerializer(many=True, allow_null=True)
-    audios = MessageAudioSerializer(many=True, allow_null=True)
-    videos = MessageVideoSerializer(many=True, allow_null=True)
-    files = MessageFileSerializer(many=True, allow_null=True)
-    delay = MessageDelaySerializer(allow_null=True)
-    buttons = MessageButtonSerializer(many=True, allow_null=True)
+    texts = MessageTextSerializer(many=True, allow_null=True, read_only=False)
+    images = MessageImageSerializer(many=True, allow_null=True, read_only=False)
+    audios = MessageAudioSerializer(many=True, allow_null=True, read_only=False)
+    videos = MessageVideoSerializer(many=True, allow_null=True, read_only=False)
+    files = MessageFileSerializer(many=True, allow_null=True, read_only=False)
+    delay = MessageDelaySerializer(allow_null=True, read_only=False)
+    buttons = MessageButtonSerializer(many=True, allow_null=True, read_only=False)
 
     class Meta:
         model = Message
         fields = (
-            'pk',
             'send_datetime',
-            'chain',
+            'is_template',
             'links',
             'texts',
             'images',
