@@ -1,17 +1,13 @@
-from django.shortcuts import render
 from rest_framework import permissions
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .models import MessagesChain, Message
 from .serializers import MessageChainSerializer, MessageSerializer
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
 
 class MessageChainListCreateView(ListCreateAPIView):
     permission_classes = (permissions.AllowAny, )
-    queryset = MessagesChain.objects.all()
     serializer_class = MessageChainSerializer
 
     def get_queryset(self):
@@ -27,7 +23,6 @@ class MessageChainListCreateView(ListCreateAPIView):
     
 class MessageChainRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.AllowAny, )
-    queryset = MessagesChain.objects.all()
     serializer_class = MessagesChain.objects.all()
 
     def get_queryset(self):
@@ -68,4 +63,5 @@ class ServiceTemplateMessageListView(ListAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = Message.service_templates.all()
     serializer_class = MessageSerializer
+
 

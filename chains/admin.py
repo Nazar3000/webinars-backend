@@ -96,6 +96,7 @@ class MessageAdmin(admin.ModelAdmin):
     fields = (
         'send_datetime',
         'chain',
+        'is_template',
     )
 
 
