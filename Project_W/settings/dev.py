@@ -8,3 +8,5 @@ EMAIL_HOST_USER = 'projectw.service@gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+TEMPLATES[0]['DIRS'] += [os.path.join(BASE_DIR, 'chat/templates')]
