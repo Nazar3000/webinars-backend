@@ -37,7 +37,7 @@ class Webinar(TimeStampedModel):
 
     slug = models.SlugField(max_length=16, primary_key=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    viewers = models.ManyToManyField(CustomUser, blank=True)
+    viewers = models.ManyToManyField(CustomUser, blank=True)  # invited viewers
     video = models.FileField(
         upload_to='projects/webinar/video',
         blank=True,
@@ -109,6 +109,15 @@ class Webinar(TimeStampedModel):
     class Meta:
         verbose_name = 'Webinar'
         verbose_name_plural = 'Webinars'
+
+
+class WebinarOnlineWatchersCount(models.Model):
+    webinar = models.OneToOneField(Webinar, on_delete=models.CASCADE)
+
+    is_fake = models.BooleanField(default=False)
+    count = models.IntegerField(default=0, null=True, blank=True)  # null if not using fake counter
+
+    viewers = models.ManyToManyField(CustomUser, blank=True)  # actual viewers
 
 
 class FakeChatMessageBase(models.Model):

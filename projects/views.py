@@ -1,10 +1,12 @@
+import threading
+
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from projects.models import Project, Webinar, WebinarFakeChatMessage
+from projects.models import Project, Webinar, WebinarFakeChatMessage, WebinarOnlineWatchersCount
 from rest_framework.permissions import AllowAny
 from projects.serializers import ProjectSerializer, UpdateActivationProjectSerializer, WebinarSerializer, \
     UserCountSerializer, WebinarChatActivateSerializer, WebinarFakeMessageSerializer, WebinarFakeChatMessageSerializer, \
@@ -50,7 +52,9 @@ class ProjectViewSet(ModelViewSet):
         data = serializer.validated_data
         try:
             project = Project.objects.get(user_id=data['user_id'], is_active=True)
-            Webinar.objects.get(project=project, slug=data['slug'])
+            webinar = Webinar.objects.get(project=project, slug=data['slug'])
+
+            WebinarOnlineWatchersCount.objects.get_or_create(webinar=webinar)
         except (Project.DoesNotExist, Webinar.DoesNotExist):
             return Response(status=status.HTTP_403_FORBIDDEN)
         return Response(status=status.HTTP_200_OK)

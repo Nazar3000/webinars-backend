@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'positions',
     'timezone_field',
     'corsheaders',
+    'channels',
 
     # apps
     'users',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     'bots',
     'chains',
     'analytics',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -88,7 +90,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Project_W.wsgi.application'
+ASGI_APPLICATION = 'Project_W.urls.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT'))],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
