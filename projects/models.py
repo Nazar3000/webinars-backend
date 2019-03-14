@@ -1,8 +1,8 @@
+from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
 from users.models import CustomUser
 
 from random import randint
-from multiselectfield import MultiSelectField
 from projects.utils.generator import generate_nickname, generate_name
 
 
@@ -48,13 +48,11 @@ class Webinar(TimeStampedModel):
     description = models.TextField(max_length=4095, null=True, blank=True, verbose_name='Description')
     is_active = models.BooleanField(default=False, verbose_name='Is active?')
 
-    active_chats = MultiSelectField(
+    chat_type = models.CharField(
         choices=CHATS,
-        max_choices=2,
         max_length=14,
-        null=True,
         blank=True,
-        verbose_name='Active chats'
+        default='public'
     )
 
     stream_datetime = models.DateTimeField()
@@ -115,7 +113,8 @@ class WebinarOnlineWatchersCount(models.Model):
     webinar = models.OneToOneField(Webinar, on_delete=models.CASCADE)
 
     is_fake = models.BooleanField(default=False)
-    count = models.IntegerField(default=0, null=True, blank=True)  # null if not using fake counter
+    fake_count = models.PositiveIntegerField(default=0, null=True, blank=True)  # null if not using fake counter
+    fake_count_range = IntegerRangeField(null=True, blank=True)
 
     viewers = models.ManyToManyField(CustomUser, blank=True)  # actual viewers
 

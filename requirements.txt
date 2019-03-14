@@ -15,7 +15,6 @@ daphne==2.2.5
 Django==2.1.5
 django-cors-headers==2.4.1
 django-extra-fields==1.0.0
-django-multiselectfield==0.1.8
 django-positions==0.6.0
 django-timezone-field==3.0
 djangorestframework==3.9.1

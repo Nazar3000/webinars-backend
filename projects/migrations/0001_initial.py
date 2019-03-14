@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import multiselectfield.db.fields
 
 
 class Migration(migrations.Migration):
@@ -24,7 +23,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=False, verbose_name='Is active?')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created date')),
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated date')),
-                ('active_chats', multiselectfield.db.fields.MultiSelectField(blank=True, choices=[('private', 'private'), ('public', 'public')], max_length=14, null=True, verbose_name='Active chats')),
+                ('active_chats', models.CharField(blank=True, max_length=255, null=True, verbose_name='Active Chats')),
                 ('date_activate', models.DateTimeField(blank=True, null=True, verbose_name='Activate date')),
                 ('user_counter', models.CharField(blank=True, choices=[('fake', 'fake'), ('real', 'real')], max_length=4, null=True, verbose_name='User counter type')),
                 ('min_fake_user_count', models.PositiveIntegerField(blank=True, default=0, null=True, verbose_name='Minimum value for fake people count')),
@@ -81,7 +80,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=False, verbose_name='Is active?')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created date')),
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated date')),
-                ('active_chats', multiselectfield.db.fields.MultiSelectField(blank=True, choices=[('private', 'private'), ('public', 'public')], max_length=14, null=True, verbose_name='Active chats')),
+                ('active_chats', models.CharField(blank=True, max_length=255, null=True, verbose_name='Active Chats')),
                 ('date_activate', models.DateTimeField(blank=True, null=True, verbose_name='Activate date')),
                 ('user_counter', models.CharField(blank=True, choices=[('fake', 'fake'), ('real', 'real')], max_length=4, null=True, verbose_name='User counter type')),
                 ('min_fake_user_count', models.PositiveIntegerField(blank=True, default=0, null=True, verbose_name='Minimum value for fake people count')),

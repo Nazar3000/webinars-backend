@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     # libs
     'rest_framework',
     'drf_yasg',
-    'multiselectfield',
     'positions',
     'timezone_field',
     'corsheaders',

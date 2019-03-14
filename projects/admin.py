@@ -21,7 +21,7 @@ class WebinarAdmin(admin.ModelAdmin):
         'title',
         'description',
         'is_active',
-        'active_chats',
+        'chat_type',
         'stream_datetime',
         'user_counter',
         'min_fake_user_count',
