@@ -90,7 +90,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
         while True:
-            await asyncio.sleep(2)
+            await asyncio.sleep(10)
 
             if self.counter:
                 if self.counter.is_fake:
