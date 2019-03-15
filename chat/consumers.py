@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 from math import floor, ceil
 from random import randint
@@ -88,9 +89,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event['message']
+        user = self.scope['user']
 
         await self.send(text_data=json.dumps({
             'message': message,
+            'username': '{}'.format(user.username) if user.username else None,
+            'email': '{}'.format(user.email),
+            'datetime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
             'chatType': 'public' if self.webinar else self.webinar.chat_type
         }))
 
