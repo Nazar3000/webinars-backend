@@ -60,6 +60,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             await self.accept()
 
+            await self.run_receiver()
+
+    async def run_receiver(self):
+        pass
+
     async def disconnect(self, close_code):
         if self.counter and self.scope['user'].is_authenticated:
             self.counter.viewers.remove(self.scope['user'])
@@ -89,9 +94,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'chatType': 'public' if self.webinar else self.webinar.chat_type
         }))
 
-        while True:
-            await asyncio.sleep(10)
 
+class GetOnlineConsumer(ChatConsumer):
+    async def run_receiver(self):
+        await self.get_online({})
+
+    async def get_online(self, event):
+        while True:
             if self.counter:
                 if self.counter.is_fake:
                     online_count = self.get_fake_count(self.counter.fake_count, self.counter.fake_count_range)
@@ -105,3 +114,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'onlineCount': online_count
             }))
+
+            await asyncio.sleep(10)
