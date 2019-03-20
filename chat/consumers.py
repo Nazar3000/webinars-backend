@@ -6,6 +6,7 @@ from random import randint
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from .models import ChatMessage
 from projects.models import WebinarOnlineWatchersCount, Webinar
 
 
@@ -47,12 +48,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = 'chat_%s' % self.room_name
         self.counter = self.get_counter()
         self.webinar = self.get_webinar()
+        user = self.scope['user']
 
-        if not self.webinar or not self.scope['user'].is_authenticated:
+        if not self.webinar or not user.is_authenticated:
             await self.close(404)
         else:
             if self.counter:
-                self.counter.viewers.add(self.scope['user'])
+                self.counter.viewers.add(user)
 
             await self.channel_layer.group_add(
                 self.room_group_name,
@@ -60,6 +62,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
             await self.accept()
+
+            for message in ChatMessage.objects.filter(webinar=self.webinar):
+                await self.send(text_data=json.dumps({
+                    'message': message.text,
+                    'username': '{}'.format(message.created_by.username) if message.created_by.username else None,
+                    'email': '{}'.format(message.created_by.email),
+                    'datetime': message.created.strftime('%Y-%m-%d %H:%M:%S.%f'),
+                    'chatType': 'public' if message.webinar else message.webinar.chat_type,
+                    'watched': user in message.watched_by.all()
+                }))
+                message.watched_by.add(user)
 
             await self.run_receiver()
 
@@ -91,6 +104,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         user = self.scope['user']
 
+        chat_message = ChatMessage.objects.create(
+            webinar=self.webinar,
+            text=message,
+            created_by=user
+        )
+        chat_message.watched_by.add(user)
+
         await self.send(text_data=json.dumps({
             'message': message,
             'username': '{}'.format(user.username) if user.username else None,
@@ -121,3 +141,28 @@ class GetOnlineConsumer(ChatConsumer):
             }))
 
             await asyncio.sleep(10)
+
+
+class GetChatsConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        user = self.scope['user']
+
+        if not user.is_authenticated or not user.is_superuser:
+            await self.close(404)
+        else:
+            webinar_names = Webinar.objects.all().values_list('pk', flat=True)
+            chat_name_dict_list = []
+
+            for name in webinar_names:
+                latest_message = ChatMessage.objects.filter(webinar__pk=name).latest('created')
+                watched = False
+                if user in latest_message.watched_by.all():
+                    watched = True
+                chat_name_dict_list.append({
+                    'name': name,
+                    'watched': watched
+                })
+
+            await self.accept()
+
+            await self.send(text_data=json.dumps(chat_name_dict_list))
