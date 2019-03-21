@@ -63,21 +63,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             await self.accept()
 
-            for message in ChatMessage.objects.filter(webinar=self.webinar):
-                await self.send(text_data=json.dumps({
-                    'message': message.text,
-                    'username': '{}'.format(message.created_by.username) if message.created_by.username else None,
-                    'email': '{}'.format(message.created_by.email),
-                    'datetime': message.created.strftime('%Y-%m-%d %H:%M:%S.%f'),
-                    'chatType': 'public' if message.webinar else message.webinar.chat_type,
-                    'watched': user in message.watched_by.all()
-                }))
-                message.watched_by.add(user)
-
             await self.run_receiver()
 
     async def run_receiver(self):
-        pass
+        user = self.scope['user']
+        messages = []
+        for message in ChatMessage.objects.filter(webinar=self.webinar):
+            messages.append({
+                'message': message.text,
+                'username': '{}'.format(message.created_by.username) if message.created_by.username else None,
+                'email': '{}'.format(message.created_by.email),
+                'datetime': message.created.strftime('%Y-%m-%d %H:%M:%S.%f'),
+                'chatType': 'public' if message.webinar else message.webinar.chat_type,
+                'watched': user in message.watched_by.all()
+            })
+            message.watched_by.add(user)
+        await self.send(text_data=json.dumps(messages))
 
     async def disconnect(self, close_code):
         if self.counter and self.scope['user'].is_authenticated:
@@ -137,7 +138,8 @@ class GetOnlineConsumer(ChatConsumer):
                 online_count = 0
 
             await self.send(text_data=json.dumps({
-                'onlineCount': online_count
+                'onlineCount': online_count,
+                'isFake': self.counter.is_fake if self.counter else False
             }))
 
             await asyncio.sleep(10)
