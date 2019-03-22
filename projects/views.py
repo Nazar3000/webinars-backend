@@ -5,6 +5,9 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+import requests
 
 from projects.models import Project, Webinar, WebinarFakeChatMessage, WebinarOnlineWatchersCount
 from rest_framework.permissions import AllowAny
@@ -27,7 +30,7 @@ class ProjectViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'activate':
             return UpdateActivationProjectSerializer
-        elif self.action in ['check_publish_stream_permission', 'check_play_stream_permission']:
+        elif self.action in ['check_publish_stream_permission', 'check_play_stream_permission', 'check_stream_status']:
             return WebinarPermissionSerializer
         return ProjectSerializer
 
@@ -69,6 +72,38 @@ class ProjectViewSet(ModelViewSet):
         if user not in webinar.viewers.all():
             return Response(status=status.HTTP_403_FORBIDDEN)
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def check_stream_status(self, request, *args, **kwargs):
+        data_to_response = {}
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
+        data = serializer.validated_data
+        webinar = get_object_or_404(Webinar, slug=data['slug'])
+        r = requests.get(url='http://django:8000/' + webinar.slug + '.m3u8')
+        # r = requests.get(url='https://foxery.io/test.m3u8')
+        user = User.objects.get(pk=data['user_id'])
+        if r.status_code != 200:
+            if webinar.stream_datetime > timezone.localtime(timezone=user.timezone):
+                data_to_response['time_left_to_start_streaming'] = (webinar.stream_datetime - timezone.localtime(timezone=user.timezone)).seconds
+            else:
+                data_to_response['time_left_to_start_streaming'] = 0
+
+            if webinar.image_cover:
+                data_to_response['image_cover'] = webinar.image_cover.url
+            else:
+                data_to_response['image_cover'] = None
+
+            if webinar.video_cover:
+                data_to_response['video_cover'] = webinar.video_cover.url
+            else:
+                data_to_response['video_cover'] = None
+            return Response(
+                status=status.HTTP_206_PARTIAL_CONTENT,
+                data=data_to_response
+            )
+        else:
+            return Response(status=status.HTTP_200_OK)
 
 
 class WebinarViewSet(WebinarMixin, ModelViewSet):

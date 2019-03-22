@@ -60,6 +60,7 @@ urlpatterns = [
     path('api/<version>/', include('users.urls')),
     path('api/<version>/projects/', include('projects.urls')),
     path('api/<version>/bots/', include('bots.urls')),
+    path('api/<version>/projects/<int:project_id>/chains/', include('chains.urls'))
 ] \
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
