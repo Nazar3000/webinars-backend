@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from projects.models import Project
 from chains.managers import MessageUserTemplateManager, MessageServiceTemplateManager, MessagesManager
@@ -17,17 +18,40 @@ class MessagesChain(models.Model):
         return '{} - {}'.format(self.project, self.title)
 
 
+class MapField(models.Field):
+
+    description = "Latitude and Longitude pair of values"
+
+    def db_type(self, connection):
+        return 'varchar(25)'
+
+
 class Message(models.Model):
-    send_datetime = models.DateTimeField(
-        verbose_name='Send time'
-    )
     chain = models.ForeignKey(
         MessagesChain,
         on_delete=models.CASCADE,
         related_name='chains_message',
-        blank=True, null=True,
+        blank=True,
+        null=True,
     )
     is_template = models.BooleanField(default=False)
+    order = models.PositiveSmallIntegerField()
+    delay = models.PositiveIntegerField(default=0)
+
+    # timer = ''
+    text = models.TextField(null=True, blank=True)
+    # button = ''
+    link = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='messages/images', null=True, blank=True)
+    audio = models.FileField(upload_to='messages/audio', null=True, blank=True)
+    video = models.FileField(upload_to='messages/videos', null=True, blank=True)
+    file = models.FileField(upload_to='messages/files', null=True, blank=True)
+    map = ArrayField(
+        models.DecimalField(max_digits=11, decimal_places=7),
+        size=2,
+        blank=True,
+        null=True
+    )
 
     # managers:
     objects = models.Manager()
@@ -36,161 +60,11 @@ class Message(models.Model):
     service_templates = MessageServiceTemplateManager()
 
     class Meta:
-        verbose_name = "Message"
-        verbose_name_plural = "Messages"
+        unique_together = ('order', 'chain')
 
     def __str__(self):
         return '{} - {}'.format(self.chain, self.id)
 
-
-class MessageLink(models.Model):
-    message = models.ForeignKey(
-        Message, 
-        on_delete=models.CASCADE,
-        related_name='links'
-    )
-    link = models.URLField(blank=True, null=True)
-    
-    class Meta:
-        verbose_name = 'Message link'
-        verbose_name_plural = 'Message links'
-    
-    def __str__(self):
-        return '{}'.format(self.link)
-
-
-class MessageText(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='texts'
-    )
-    text = models.TextField(max_length=4096)
-
-    class Meta:
-        verbose_name = 'Message text'
-        verbose_name_plural = 'Message texts'
-
-    def __str__(self):
-        return '{}'.format(self.text)
-
-
-class MessageImage(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-    image = models.ImageField(upload_to='messages/images')
-
-    class Meta:
-        verbose_name = 'Message text'
-        verbose_name_plural = 'Message texts'
-
-    def __str__(self):
-        return '{}'.format(self.image)
-
-
-class MessageAudio(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='audios'
-    )
-    audio = models.FileField(upload_to='messages/audio')
-
-    class Meta:
-        verbose_name = 'Message audio'
-        verbose_name_plural = 'Message audios'
-
-    def __str__(self):
-        return '{}'.format(self.audio)
-
-
-class MessageVideo(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='videos'
-    )
-    video = models.FileField(upload_to='messages/videos')
-
-    class Meta:
-        verbose_name = 'Message video'
-        verbose_name_plural = 'Message videos'
-
-    def __str__(self):
-        return '{}'.format(self.video)
-
-
-class MessageFile(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='files'
-    )
-    file = models.FileField(upload_to='messages/files')
-
-    class Meta:
-        verbose_name = 'Message file'
-        verbose_name_plural = 'Message files'
-
-    def __str__(self):
-        return '{}'.format(self.file)
-
-
-class MessageDelay(models.Model):
-    message = models.OneToOneField(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='delay'
-    )
-    delay = models.IntegerField(
-        verbose_name='Delay time (sec)'
-    )
-
-    class Meta:
-        verbose_name = 'Message delay'
-        verbose_name_plural = 'Message delays'
-
-    def __str__(self):
-        return '{}'.format(self.delay)
-
-
-class MessageButton(models.Model):
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='buttons'
-    )
-    title = models.CharField(
-        max_length=256,
-        verbose_name='Button title'
-    )
-
-    link = models.URLField(
-        blank=True, null=True,
-        verbose_name='Button link'
-    )
-
-    deactivate_chain_id = models.PositiveIntegerField(
-        verbose_name='Deactivate chain ID',
-        blank=True, null=True,
-    )
-
-    activate_chain_id = models.PositiveIntegerField(
-        verbose_name='Activate chain ID',
-        blank=True, null=True,
-    )
-
-    # TODO: add some other action for button
-
-    class Meta:
-        verbose_name = 'Message button'
-        verbose_name_plural = 'Message buttons'
-
-    def __str__(self):
-        return '{}'.format(self.title)
-
-
-
+    def save(self, *args, **kwargs):
+        # TODO: make celery task
+        super().save(*args, **kwargs)
