@@ -1,26 +1,14 @@
 from rest_framework import serializers
-from .models import TelegramBot, FacebookBot, WhatsAppBot, ViberBot
+from .models import BotBase
 
 
 class TelegramBotSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TelegramBot
-        fields = '__all__'
-
-
-class FacebookBotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FacebookBot
-        fields = '__all__'
-
-
-class ViberBotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ViberBot
-        fields = '__all__'
-
-
-class WhatsAppBotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WhatsAppBot
-        fields = '__all__'
+        model = BotBase
+        fields = (
+            'name',
+            'api_key',
+            'active',
+            'user',
+            'bot_type',
+        )

@@ -91,14 +91,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Project_W.wsgi.application'
 ASGI_APPLICATION = 'Project_W.urls.application'
 
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT'))],
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
     },
 }
+
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_TASK_RESULT_EXPIRES = 86400
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
