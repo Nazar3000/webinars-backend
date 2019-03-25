@@ -11,7 +11,7 @@ import requests
 
 from projects.models import Project, Webinar, WebinarFakeChatMessage, WebinarOnlineWatchersCount
 from rest_framework.permissions import AllowAny
-from projects.serializers import ProjectSerializer, UpdateActivationProjectSerializer, WebinarSerializer, \
+from projects.serializers import ProjectSerializer, WebinarSerializer, \
     UserCountSerializer, WebinarChatActivateSerializer, WebinarFakeMessageSerializer, WebinarFakeChatMessageSerializer, \
     WebinarPermissionSerializer
 from rest_framework.viewsets import ModelViewSet
@@ -28,9 +28,7 @@ class ProjectViewSet(ModelViewSet):
         return Project.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == 'activate':
-            return UpdateActivationProjectSerializer
-        elif self.action in ['check_publish_stream_permission', 'check_play_stream_permission', 'check_stream_status']:
+        if self.action in ['check_publish_stream_permission', 'check_play_stream_permission', 'check_stream_status']:
             return WebinarPermissionSerializer
         return ProjectSerializer
 
@@ -40,13 +38,6 @@ class ProjectViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @action(detail=True, methods=['patch'])
-    def activate(self, request, *args, **kwargs):
-        serializer = self.get_serializer(instance=self.get_object(), data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def check_publish_stream_permission(self, request, *args, **kwargs):

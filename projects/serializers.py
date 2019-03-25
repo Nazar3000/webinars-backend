@@ -5,7 +5,7 @@ from projects.models import Project, Webinar, WebinarFakeChatMessage
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('id', 'name', 'description',)
+        fields = ('id', 'name', 'description', 'is_active',)
 
     def __init__(self, *args, **kwargs):
         if 'user' in kwargs.keys():
@@ -15,12 +15,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['user'] = self.user
         return super().create(validated_data)
-
-
-class UpdateActivationProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ('is_active', )
 
 
 class WebinarSerializer(serializers.ModelSerializer):

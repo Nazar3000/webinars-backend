@@ -1,32 +1,25 @@
 from rest_framework import permissions
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.viewsets import ModelViewSet
+
 from .models import MessagesChain, Message
 from .serializers import MessageChainSerializer, MessageSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
 
-class MessageChainListCreateView(ListCreateAPIView):
-    permission_classes = (permissions.AllowAny, )
+class MessagesChainViewSet(ModelViewSet):
     serializer_class = MessageChainSerializer
 
     def get_queryset(self):
-        return MessagesChain.objects.filter(project_id=self.kwargs.get('project_id'))
+        return MessagesChain.objects.filter(project__pk=self.kwargs.get('project_pk'))
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data, project_id=self.kwargs.get('project_id'))
+        serializer = self.get_serializer(data=request.data, project_id=self.kwargs.get('project_pk'))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    
-class MessageChainRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.AllowAny, )
-    serializer_class = MessagesChain.objects.all()
-
-    def get_queryset(self):
-        return MessagesChain.objects.filter(project_id=self.kwargs.get('project_id'))
 
 
 class MessageListCreateView(ListCreateAPIView):
