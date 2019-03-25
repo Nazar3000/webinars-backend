@@ -10,14 +10,11 @@ router.register(r'', ProjectViewSet, base_name='Project')
 projects_router = routers.NestedSimpleRouter(router, r'', lookup='project')
 projects_router.register(r'chains', views.MessagesChainViewSet, base_name='MessagesChain')
 
-urlpatterns = projects_router.urls
+chains_router = routers.NestedSimpleRouter(projects_router, r'chains', lookup='chain')
+chains_router.register(r'messages', views.MessageViewSet, base_name='Message')
+
+urlpatterns = projects_router.urls + chains_router.urls
 urlpatterns += [
-    path('<int:chain_id>/messages/', views.MessageListCreateView.as_view(), name='list_create_message'),
-    path(
-        'messages/<int:pk>',
-        views.MessageRetrieveUpdateDestroyView.as_view(),
-        name='retrieve_update_destroy_message'
-    ),
     path(
         'messages/user_templates/',
         views.UserTemplateMessageListView.as_view(),
