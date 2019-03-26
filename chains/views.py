@@ -44,5 +44,3 @@ class ServiceTemplateMessageListView(ListAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = Message.service_templates.all()
     serializer_class = MessageSerializer
-
-

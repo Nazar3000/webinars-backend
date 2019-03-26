@@ -18,14 +18,6 @@ class MessagesChain(models.Model):
         return '{} - {}'.format(self.project, self.title)
 
 
-class MapField(models.Field):
-
-    description = "Latitude and Longitude pair of values"
-
-    def db_type(self, connection):
-        return 'varchar(25)'
-
-
 class Message(models.Model):
     chain = models.ForeignKey(
         MessagesChain,
