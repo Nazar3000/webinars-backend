@@ -61,7 +61,7 @@ def send_bot_message(msg_pk, api_key, bot_pk, chat_id):
         elif msg_type == 'file':
             bot.send_document(chat_id=chat_id, document=content)
         elif msg_type == 'map':
-            bot.send_location(chat_id=chat_id, latitude=content[0], longitude=content[1])
+            bot.send_location(chat_id=chat_id, latitude=str(content[0]), longitude=str(content[1]))
         # elif msg_type == 'timer':
         #     pass
         # elif msg_type == 'button':

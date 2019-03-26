@@ -43,7 +43,7 @@ class Message(models.Model):
         size=2,
         blank=True,
         null=True
-    )
+    )  # [latitude, longitude]
 
     # managers:
     objects = models.Manager()
