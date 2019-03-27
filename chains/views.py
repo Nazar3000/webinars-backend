@@ -5,13 +5,18 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
 from .models import MessagesChain, Message
-from .serializers import MessageChainSerializer, MessageSerializer, MessageFullSerializer
+from .serializers import MessageChainSerializer, MessageSerializer, \
+    MessageFullSerializer, MessageChainCreateSerializer, MessageFullUpdateSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
 
 class MessagesChainViewSet(ModelViewSet):
-    serializer_class = MessageChainSerializer
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return MessageChainCreateSerializer
+        else:
+            return MessageChainSerializer
 
     def get_queryset(self):
         return MessagesChain.objects.filter(project__pk=self.kwargs.get('project_pk'))
@@ -21,8 +26,13 @@ class MessagesChainViewSet(ModelViewSet):
 
 
 class MessageViewSet(ModelViewSet):
-    serializer_class = MessageFullSerializer
     parser_classes = (MultiPartParser, CamelCaseJSONParser,)
+
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return MessageFullUpdateSerializer
+        else:
+            return MessageFullSerializer
 
     def get_queryset(self):
         return Message.objects.filter(chain_id=self.kwargs.get('chain_pk'))
