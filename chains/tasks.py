@@ -35,7 +35,7 @@ def get_msg_type_and_content(message):
 
 
 @app.task
-def send_bot_message(msg_pk, api_key, bot_pk, chat_id):
+def send_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
     from bots.models import BotBase
     from chains.models import Message
 
@@ -66,3 +66,5 @@ def send_bot_message(msg_pk, api_key, bot_pk, chat_id):
         #     pass
         # elif msg_type == 'button':
         #     pass
+
+        message.sent_to.add(user_pk)

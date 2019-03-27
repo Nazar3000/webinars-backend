@@ -23,16 +23,16 @@ class BotBase(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.active and not self.telegram_chat_id:
-            bot_init(self.api_key, self.pk)
+        bot_init(self.api_key, self.pk, self.active)
 
 
 @receiver(post_save, sender=BotBase)
 def send_bot_chain_messages(sender, instance, created, **kwargs):
-    project_pks = Webinar.objects.filter(viewers__pk__exact=instance.user.pk)\
-        .values_list('project', flat=True)
-    chains = MessagesChain.objects.filter(project__pk__in=project_pks)
+    if instance.active:
+        project_pks = Webinar.objects.filter(viewers__pk__exact=instance.user.pk)\
+            .values_list('project', flat=True)
+        chains = MessagesChain.objects.filter(project__pk__in=project_pks)
 
-    for chain in chains:
-        if instance.telegram_chat_id:
-            start_bot_chain(chain, instance)
+        for chain in chains:
+            if instance.telegram_chat_id:
+                start_bot_chain(chain, instance)

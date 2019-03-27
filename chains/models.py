@@ -45,6 +45,8 @@ class Message(models.Model):
         null=True
     )  # [latitude, longitude]
 
+    sent_to = models.ManyToManyField('users.CustomUser', blank=True)
+
     # managers:
     objects = models.Manager()
     messages = MessagesManager()
