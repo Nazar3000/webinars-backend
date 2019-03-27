@@ -1,5 +1,7 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+
+from chains.constants import MessageTypes
 from projects.models import Project
 from chains.managers import MessageUserTemplateManager, MessageServiceTemplateManager, MessagesManager
 
@@ -45,7 +47,10 @@ class Message(models.Model):
         null=True
     )  # [latitude, longitude]
 
-    # msg_type = models.CharField()
+    msg_type = models.CharField(
+        max_length=10,
+        choices=MessageTypes.MESSAGE_TYPES
+    )
 
     sent_to = models.ManyToManyField('users.CustomUser', blank=True)
 
@@ -60,7 +65,3 @@ class Message(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.chain, self.id)
-
-    def save(self, *args, **kwargs):
-        # TODO: make celery task
-        super().save(*args, **kwargs)

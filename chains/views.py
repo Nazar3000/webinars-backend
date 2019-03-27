@@ -1,9 +1,11 @@
+from djangorestframework_camel_case.parser import CamelCaseJSONParser
 from rest_framework import permissions
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import ListAPIView
+from rest_framework.parsers import MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
 from .models import MessagesChain, Message
-from .serializers import MessageChainSerializer, MessageSerializer
+from .serializers import MessageChainSerializer, MessageSerializer, MessageFullSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -15,11 +17,12 @@ class MessagesChainViewSet(ModelViewSet):
         return MessagesChain.objects.filter(project__pk=self.kwargs.get('project_pk'))
 
     def perform_create(self, serializer):
-        serializer.save(project_pk=self.kwargs.get('project_pk'))
+        serializer.save(project_id=self.kwargs.get('project_pk'))
 
 
 class MessageViewSet(ModelViewSet):
-    serializer_class = MessageSerializer
+    serializer_class = MessageFullSerializer
+    parser_classes = (MultiPartParser, CamelCaseJSONParser,)
 
     def get_queryset(self):
         return Message.objects.filter(chain_id=self.kwargs.get('chain_pk'))
