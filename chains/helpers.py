@@ -10,16 +10,15 @@ def bot_init(api_key, bot_pk, active):
         from bots.models import BotBase
         bot_instance = BotBase.objects.get(pk=bot_pk)
 
-        if bot_instance.telegram_chat_id:
-            def start(tg_bot, update):
-                print('start command')
-                bot_instance.telegram_chat_id = update.message.chat_id
-                bot_instance.save()
+        def start(tg_bot, update):
+            print('start command')
+            bot_instance.telegram_chat_id = update.message.chat_id
+            bot_instance.save()
 
-            updater.dispatcher.add_handler(CommandHandler('start', start))
+        updater.dispatcher.add_handler(CommandHandler('start', start))
 
-            updater.start_polling()
-            # updater.idle()
+        updater.start_polling()
+        # updater.idle()
     else:
         updater.stop()
 

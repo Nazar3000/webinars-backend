@@ -45,6 +45,8 @@ class Message(models.Model):
         null=True
     )  # [latitude, longitude]
 
+    msg_type = models.CharField()
+
     sent_to = models.ManyToManyField('users.CustomUser', blank=True)
 
     # managers:
