@@ -50,7 +50,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.webinar = self.get_webinar()
         user = self.scope['user']
 
-        if not self.webinar or not user.is_authenticated:
+        # if not self.webinar or not user.is_authenticated:
+        if not self.webinar:
             await self.close(404)
         else:
             if self.counter:
@@ -81,7 +82,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(messages))
 
     async def disconnect(self, close_code):
-        if self.counter and self.scope['user'].is_authenticated:
+        # if self.counter and self.scope['user'].is_authenticated:
+        if self.counter:
             self.counter.viewers.remove(self.scope['user'])
 
         await self.channel_layer.group_discard(
@@ -149,22 +151,22 @@ class GetChatsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope['user']
 
-        if not user.is_authenticated or not user.is_superuser:
-            await self.close(404)
-        else:
-            webinar_names = Webinar.objects.all().values_list('pk', flat=True)
-            chat_name_dict_list = []
+        # if not user.is_authenticated or not user.is_superuser:
+        #     await self.close(404)
+        # else:
+        webinar_names = Webinar.objects.all().values_list('pk', flat=True)
+        chat_name_dict_list = []
 
-            for name in webinar_names:
-                latest_message = ChatMessage.objects.filter(webinar__pk=name).latest('created')
-                watched = False
-                if user in latest_message.watched_by.all():
-                    watched = True
-                chat_name_dict_list.append({
-                    'name': name,
-                    'watched': watched
-                })
+        for name in webinar_names:
+            latest_message = ChatMessage.objects.filter(webinar__pk=name).latest('created')
+            watched = False
+            if user in latest_message.watched_by.all():
+                watched = True
+            chat_name_dict_list.append({
+                'name': name,
+                'watched': watched
+            })
 
-            await self.accept()
+        await self.accept()
 
-            await self.send(text_data=json.dumps(chat_name_dict_list))
+        await self.send(text_data=json.dumps(chat_name_dict_list))
