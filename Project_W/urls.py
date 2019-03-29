@@ -59,7 +59,6 @@ urlpatterns = [
 
     path('api/<version>/', include('users.urls')),
     path('api/<version>/projects/', include('projects.urls')),
-    path('api/<version>/bots/', include('bots.urls')),
     path('api/<version>/projects/', include('chains.urls'))
 ] \
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \

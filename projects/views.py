@@ -113,12 +113,11 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
         else:
             return self.serializer_class
 
-    # TODO: pass project
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(project_id=self.kwargs.get('project_pk'))
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(project_id=self.kwargs.get('project_pk'))
 
 
 class FakeChatMessageViewSet(ModelViewSet):
