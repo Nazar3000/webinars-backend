@@ -3,6 +3,7 @@ import threading
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from django.utils import timezone
@@ -114,10 +115,18 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
             return self.serializer_class
 
     def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get('project_pk'))
+        if Project.objects.filter(pk=self.kwargs.get('project_pk')).exists():
+            serializer.save(project_id=self.kwargs.get('project_pk'))
+        else:
+            raise ValidationError({
+                'project': 'Project with id={} does not exist'.format(self.kwargs.get('project_pk'))})
 
     def perform_update(self, serializer):
-        serializer.save(project_id=self.kwargs.get('project_pk'))
+        if Project.objects.filter(pk=self.kwargs.get('project_pk')).exists():
+            serializer.save(project_id=self.kwargs.get('project_pk'))
+        else:
+            raise ValidationError({
+                'project': 'Project with id={} does not exist'.format(self.kwargs.get('project_pk'))})
 
 
 class FakeChatMessageViewSet(ModelViewSet):
