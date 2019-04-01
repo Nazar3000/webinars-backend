@@ -214,5 +214,5 @@ LOGOUT_URL = 'admin:logout'
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geo_lite2_data')
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = False
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = False
