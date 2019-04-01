@@ -12,10 +12,10 @@ class BotBase(models.Model):
     name = models.CharField(max_length=256, blank=True, null=True)
     api_key = models.CharField(max_length=256)
     active = models.BooleanField(default=True)
-    user = models.OneToOneField('users.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
     bot_type = models.CharField(max_length=8, choices=BotTypes.BOT_TYPES)
 
-    telegram_chat_id = models.CharField(max_length=16, null=True, blank=True)
+    chat_id = models.CharField(max_length=16, null=True, blank=True)
 
     def __str__(self):
         return self.bot_type
@@ -23,7 +23,7 @@ class BotBase(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        bot_init(self.api_key, self.pk, self.active)
+        bot_init(self.api_key, self.bot_type, self.pk, self.active)
 
 
 @receiver(post_save, sender=BotBase)
@@ -34,5 +34,5 @@ def send_bot_chain_messages(sender, instance, created, **kwargs):
         chains = MessagesChain.objects.filter(project__pk__in=project_pks)
 
         for chain in chains:
-            if instance.telegram_chat_id:
+            if instance.chat_id:
                 start_bot_chain(chain, instance)

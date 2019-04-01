@@ -35,7 +35,7 @@ def get_msg_type_and_content(message):
 
 
 @app.task
-def send_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
+def send_telegram_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
     from bots.models import BotBase
     from chains.models import Message
 
@@ -43,7 +43,7 @@ def send_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
     message = Message.objects.get(pk=msg_pk)
     msg_type, content = get_msg_type_and_content(message)
 
-    if bot_instance.telegram_chat_id:
+    if bot_instance.chat_id:
         bot = Bot(api_key)
 
         if msg_type == 'text':
@@ -68,3 +68,8 @@ def send_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
         #     pass
 
         message.sent_to.add(user_pk)
+
+
+@app.task
+def send_viber_bot_message(msg_pk, api_key, bot_pk, chat_id, user_pk):
+    pass

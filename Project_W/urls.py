@@ -56,6 +56,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui(), name='docs'),
     path('chat/', include('chat.urls')),
+    path('bots/', include('bots.urls')),
 
     path('api/<version>/', include('users.urls')),
     path('api/<version>/projects/', include('projects.urls')),
