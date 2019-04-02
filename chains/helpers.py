@@ -1,3 +1,4 @@
+from django.urls import reverse
 from telegram.ext import CommandHandler, Updater
 from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
@@ -34,7 +35,7 @@ def viber_bot_init(api_key, bot_type, bot_pk, active):
         auth_token=api_key
     )
     viber = Api(bot_configuration)
-    viber.set_webhook('http://127.0.0.1:8000/bots/viber-start/')
+    viber.set_webhook('http://127.0.0.1:8000' + reverse('bots:viber_handler'))
     print('here')
     # viber_request = viber.parse_request(request.get_data())
     # viber.send_messages(to=viber_request.get_sender().get_id(),
