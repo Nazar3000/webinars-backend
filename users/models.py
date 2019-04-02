@@ -38,6 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     email = models.EmailField(unique=True, null=True)
+    phone_number = models.CharField(max_length=16, null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_staff = models.BooleanField(
         'staff status',

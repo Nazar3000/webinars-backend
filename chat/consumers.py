@@ -5,9 +5,12 @@ from math import floor, ceil
 from random import randint
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth import get_user_model
 
 from .models import ChatMessage
 from projects.models import WebinarOnlineWatchersCount, Webinar
+
+User = get_user_model()
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -147,26 +150,36 @@ class GetOnlineConsumer(ChatConsumer):
             await asyncio.sleep(10)
 
 
-class GetChatsConsumer(AsyncWebsocketConsumer):
+class GetUsersConsumer(AsyncWebsocketConsumer):
+    user_id = None
+
     async def connect(self):
-        user = self.scope['user']
-
-        # if not user.is_authenticated or not user.is_superuser:
-        #     await self.close(404)
-        # else:
-        webinar_names = Webinar.objects.all().values_list('pk', flat=True)
-        chat_name_dict_list = []
-
-        for name in webinar_names:
-            latest_message = ChatMessage.objects.filter(webinar__pk=name).latest('created')
-            watched = False
-            if user in latest_message.watched_by.all():
-                watched = True
-            chat_name_dict_list.append({
-                'name': name,
-                'watched': watched
-            })
+        query_string = self.scope['query_string'].decode('utf-8')
+        if query_string:
+            query_dict = {x[0]: x[1] for x in
+                          [x.split("=") for x in query_string.split("&")]}
+            self.user_id = query_dict.get('user_id')
 
         await self.accept()
 
-        await self.send(text_data=json.dumps(chat_name_dict_list))
+        await self.run_receiver()
+
+    async def run_receiver(self):
+        users = User.objects.all()
+        messages = []
+        for user in users:
+            chat_rooms = []
+            for webinar in Webinar.objects.all():
+                if user in webinar.viewers.all():
+                    chat_rooms.append(webinar.pk)
+
+            messages.append({
+                'userId': user.pk,
+                'username': user.username,
+                'email': user.email,
+                'phoneNumber': user.phone_number,
+                'chatRooms': chat_rooms
+            })
+
+        print(messages)
+        await self.send(text_data=json.dumps(messages))
