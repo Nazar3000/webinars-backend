@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
 from rest_framework.viewsets import GenericViewSet
 
 from users.models import DeviceData
@@ -51,6 +52,7 @@ class PasswordResetConfirmView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'POST'])
 def activate(request, uidb64, token, *args, **kwargs):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -60,9 +62,9 @@ def activate(request, uidb64, token, *args, **kwargs):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Thank you for your email confirmation. Now you can log in to your account.')
+        return Response({'status': 'Thank you for your email confirmation. Now you can log in to your account.'})
     else:
-        return HttpResponse('Activation link is invalid!')
+        return Response({'status': 'Activation link is invalid!'})
 
 
 class UserProfileViewSet(mixins.RetrieveModelMixin,
