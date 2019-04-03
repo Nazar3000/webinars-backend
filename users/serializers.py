@@ -153,7 +153,7 @@ class UserProfileSerializer(RequireTogetherFields, UserSerializerMixin, serializ
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_image', 'username', 'time_zone',)
+        fields = ('id', 'email', 'password', 'confirm_password', 'avatar_image', 'username', 'time_zone', 'bot_id',)
 
     REQUIRED_TOGETHER = ('password', 'confirm_password',)
 
