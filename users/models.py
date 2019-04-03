@@ -1,3 +1,4 @@
+import uuid
 from timezone_field import TimeZoneField
 
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
@@ -67,6 +68,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     avatar = models.ImageField(blank=True, null=True, upload_to='user_profiles/avatars')
     timezone = TimeZoneField(default='Europe/London')
+
+    bot_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     USERNAME_FIELD = 'email'
     objects = MyUserManager()

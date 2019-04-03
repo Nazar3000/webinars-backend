@@ -89,10 +89,6 @@ class Webinar(TimeStampedModel):
         null=True,
         verbose_name='Webinar image cover'
     )
-    cover_time = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Cover time before video starts (in seconds)')
 
     def __str__(self):
         return '{} {}'.format(self.slug, self.title)

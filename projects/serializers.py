@@ -32,7 +32,6 @@ class WebinarSerializer(serializers.ModelSerializer):
             'stream_datetime',
             'cover_video',
             'cover_image',
-            'cover_time',
             'chat_type'
         )
 

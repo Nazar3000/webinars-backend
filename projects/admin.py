@@ -28,7 +28,6 @@ class WebinarAdmin(admin.ModelAdmin):
         'max_fake_user_count',
         'video_cover',
         'image_cover',
-        'cover_time',
     )
     inlines = (WebinarOnlineWatchersCountInline,)
 
