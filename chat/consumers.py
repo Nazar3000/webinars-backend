@@ -181,5 +181,4 @@ class GetUsersConsumer(AsyncWebsocketConsumer):
                 'chatRooms': chat_rooms
             })
 
-        print(messages)
         await self.send(text_data=json.dumps(messages))

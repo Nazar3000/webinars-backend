@@ -1,3 +1,4 @@
+from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from rest_framework import serializers
 from projects.models import Project, Webinar, WebinarFakeChatMessage
 
@@ -18,6 +19,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class WebinarSerializer(serializers.ModelSerializer):
+    cover_image = Base64ImageField(source='image_cover', required=False)
+    cover_video = Base64FileField(source='video_cover', required=False)
+
     class Meta:
         model = Webinar
         fields = (
@@ -26,32 +30,15 @@ class WebinarSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'stream_datetime',
-            'video_cover',
-            'image_cover',
+            'cover_video',
+            'cover_image',
             'cover_time',
+            'chat_type'
         )
 
 
 class UserCountSerializer(serializers.Serializer):
     counter = serializers.IntegerField(min_value=0)
-
-
-class WebinarChatActivateBase(serializers.ModelSerializer):
-    CHATS = (
-        ('private', 'private'),
-        ('public', 'public'),
-    )
-
-    active_chats = serializers.MultipleChoiceField(choices=CHATS)
-
-    class Meta:
-        abstract = True
-
-
-class WebinarChatActivateSerializer(WebinarChatActivateBase):
-    class Meta:
-        model = Webinar
-        fields = ('active_chats', )
 
 
 class WebinarFakeChatMessageSerializer(serializers.ModelSerializer):

@@ -65,25 +65,6 @@ def activate(request, uidb64, token, *args, **kwargs):
         return HttpResponse('Activation link is invalid!')
 
 
-# class CreditCardProfileView(ListCreateAPIView):
-#     authentication_classes = (JSONWebTokenAuthentication,)
-#     model = CreditCardProfile
-#     serializer_class = CreditCardProfileSerializer
-#
-#     def get_queryset(self):
-#         queryset = CreditCardProfile.objects.all()
-#         user = self.kwargs.get('user_id')
-#         if user:
-#             queryset = queryset.filter(user=user)
-#         return queryset
-#
-#
-# class CreditCardProfileUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-#     authentication_classes = (JSONWebTokenAuthentication,)
-#     serializer_class = CreditCardProfileSerializer
-#     queryset = CreditCardProfile.objects.all()
-
-
 class UserProfileViewSet(mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin,

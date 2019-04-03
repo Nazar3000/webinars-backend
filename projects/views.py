@@ -13,7 +13,7 @@ import requests
 from projects.models import Project, Webinar, WebinarFakeChatMessage, WebinarOnlineWatchersCount
 from rest_framework.permissions import AllowAny
 from projects.serializers import ProjectSerializer, WebinarSerializer, \
-    UserCountSerializer, WebinarChatActivateSerializer, WebinarFakeMessageSerializer, WebinarFakeChatMessageSerializer, \
+    UserCountSerializer, WebinarFakeMessageSerializer, WebinarFakeChatMessageSerializer, \
     WebinarPermissionSerializer
 from rest_framework.viewsets import ModelViewSet
 from projects.mixins import WebinarMixin
@@ -107,9 +107,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
         return Webinar.objects.filter(project__pk=self.kwargs.get('project_pk'))
 
     def get_serializer_class(self):
-        if self.action == 'activate_chats':
-            return WebinarChatActivateSerializer
-        elif self.action == 'user_fake_count':
+        if self.action == 'user_fake_count':
             return UserCountSerializer
         else:
             return self.serializer_class
