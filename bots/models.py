@@ -13,6 +13,7 @@ class BotBase(models.Model):
     api_key = models.CharField(max_length=256)
     active = models.BooleanField(default=True)
     user = models.OneToOneField('users.CustomUser', on_delete=models.CASCADE)
+    leads = models.ManyToManyField('users.CustomUser', blank=True, related_name='lead_bots')
     bot_type = models.CharField(max_length=8, choices=BotTypes.BOT_TYPES)
 
     telegram_chat_id = models.CharField(max_length=16, null=True, blank=True)
