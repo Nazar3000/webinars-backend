@@ -1,7 +1,6 @@
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
+from djangorestframework_camel_case.parser import CamelCaseJSONParser, CamelCaseMultiPartParser
 from rest_framework import permissions
 from rest_framework.generics import ListAPIView
-from rest_framework.parsers import MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
 from .models import MessagesChain, Message
@@ -26,7 +25,7 @@ class MessagesChainViewSet(ModelViewSet):
 
 
 class MessageViewSet(ModelViewSet):
-    parser_classes = (MultiPartParser, CamelCaseJSONParser,)
+    parser_classes = (CamelCaseMultiPartParser, CamelCaseJSONParser,)
 
     def get_serializer_class(self):
         if self.action == 'update':

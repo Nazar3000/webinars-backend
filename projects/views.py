@@ -1,12 +1,11 @@
 import threading
 
 from django.contrib.auth import get_user_model
-from djangorestframework_camel_case.parser import CamelCaseJSONParser
+from djangorestframework_camel_case.parser import CamelCaseJSONParser, CamelCaseMultiPartParser
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import timedelta
@@ -104,7 +103,7 @@ class WebinarViewSet(WebinarMixin, ModelViewSet):
     # TODO: change permissions
     permission_classes = (AllowAny,)
     serializer_class = WebinarSerializer
-    parser_classes = (MultiPartParser, CamelCaseJSONParser,)
+    parser_classes = (CamelCaseMultiPartParser, CamelCaseJSONParser,)
 
     def get_queryset(self):
         return Webinar.objects.filter(project__pk=self.kwargs.get('project_pk'))
