@@ -1,9 +1,15 @@
+import datetime
+import os
+
 from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
+
+from Project_W.celery import app
 from users.models import CustomUser
 
 from random import randint
 from projects.utils.generator import generate_nickname, generate_name
+from .tasks import start_stream_file
 
 
 class TimeStampedModel(models.Model):
@@ -89,6 +95,15 @@ class Webinar(TimeStampedModel):
         null=True,
         verbose_name='Webinar image cover'
     )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.video and self.stream_datetime.replace(tzinfo=None) >= datetime.datetime.now():
+            start_stream_file.apply_async(
+                [self.video.path, self.slug, self.project.user.pk],
+                eta=self.stream_datetime
+            )
 
     def __str__(self):
         return '{} {}'.format(self.slug, self.title)
