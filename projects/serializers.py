@@ -1,5 +1,7 @@
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from projects.models import Project, Webinar, WebinarFakeChatMessage
 
 
@@ -34,6 +36,11 @@ class WebinarSerializer(serializers.ModelSerializer):
             'cover_image',
             'chat_type'
         )
+
+    def validate_video(self, val):
+        if val.name.split('.')[-1].lower() != 'flv':
+            raise ValidationError("Only 'flv' file extension is allowed.")
+        return val
 
 
 class UserCountSerializer(serializers.Serializer):
