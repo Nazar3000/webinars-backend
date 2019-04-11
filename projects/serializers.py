@@ -38,8 +38,8 @@ class WebinarSerializer(serializers.ModelSerializer):
         )
 
     def validate_video(self, val):
-        if val.name.split('.')[-1].lower() != 'flv':
-            raise ValidationError("Only 'flv' file extension is allowed.")
+        if val.name.split('.')[-1].lower() != 'mp4':
+            raise ValidationError("Only 'mp4' file extension is allowed.")
         return val
 
 

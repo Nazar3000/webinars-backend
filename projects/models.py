@@ -1,10 +1,8 @@
 import datetime
-import os
 
 from django.contrib.postgres.fields import IntegerRangeField
 from django.db import models
 
-from Project_W.celery import app
 from users.models import CustomUser
 
 from random import randint
